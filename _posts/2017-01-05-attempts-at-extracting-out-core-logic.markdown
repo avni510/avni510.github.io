@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  Attempts at Extracting Out Core Logic 
-date:   2017-01-04 16:16:00 -0600
+date:   2017-01-05 10:10:00 -0600
 categories: Web App
 ---
 
