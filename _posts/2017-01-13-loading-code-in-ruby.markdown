@@ -26,4 +26,4 @@ In your Ruby file if you write `require time_logger` at the top of your file the
 $LOAD_PATH << File.expand_path('../lib', __FILE__)
 ```
 
-I've now included my lib directory in the `$LOAD_PATH` array. So I can use `require` statements and it will look for files in the added directory in addition to all the standard directories. The benefit of this is instead of having messy `require_relative` statements I could use clean and easy to read `require` statements. 
+I've now included my lib directory in the `$LOAD_PATH` array. So I can use `require` statements and it will look for files in the added directory in addition to all the standard directories. One benefit of this is instead of having messy `require_relative` statements I could use clean and easy to read `require` statements. The other benefit is that if you move files and add directories in the `/lib` folder you no longer have to change your path because `$LOAD_PATH` will look through everything in your `/lib` folder. 
