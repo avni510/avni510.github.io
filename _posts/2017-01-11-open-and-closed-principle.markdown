@@ -42,7 +42,11 @@ class Circle
     params[:radius] * params[:radius] * 3.14
   end
 end
+{% endhighlight %}
 
+This way if a developer wants to add another shape with `#calculate_area` a new class can be created for each new shape.  
+
+{% highlight ruby %}
 class Rectangle
   def calculate_area(params)
     params[:length] * params[:width]
@@ -50,4 +54,4 @@ class Rectangle
 end
 {% endhighlight %}
 
-This way if a developer wants to add another shape `#calculate_area` does not need any modification. A new class can be created for each shape. Allowing the Geometry class to be open for extension, but closed for modification. 
+This allows the Geometry class to be open for extension, but closed for modification.

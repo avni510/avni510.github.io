@@ -56,44 +56,53 @@ end
 Below is another example of a violation. 
 
 {% highlight ruby %}
-def Animal 
+class Animal 
   def eat 
     puts "I am eating"
+  end
+  
+  def walk
+    puts "I am walking"
   end
 end
 
 def Dog < Animal
   def walk
-    put "I am walking"
+    puts ["I", "am", "walking"]
   end
 end
 {% endhighlight %}
 
-This is a violation because any instance of Dog cannot replace any instance of Animal and be expected to behave the same way. For example, we cannot do something like this: 
+This is a violation because any instance of Dog cannot replace any instance of Animal and be expected to behave the same way. If we create an instance of Animal and an instance of Dog and call `#walk` on both of the instances we will receive back two different data structures - a string and an array respectively. 
 
 {% highlight ruby %}
 animal1 = Animal.new
-animal1.walk
+print animal1.walk
+# => "I am walking"
+dog1 = Dog.new
+print dog1.walk
+# => "["I", "am", "walking"]
 {% endhighlight %}
 
-This would cause the program to crash. Instead we can rewrite the example above to this
+Instead we need consistency. Both implementations of `#walk` need to return the same data structure. 
 
 {% highlight ruby %}
-def Animal 
+class Animal 
   def eat 
     puts "I am eating"
   end
-
+  
   def walk
-    raise NotImplementedError
+    puts "I am walking"
   end
 end
 
 def Dog < Animal
   def walk
-    put "I am walking"
+    puts "I am walking fast"
   end
 end
 {% endhighlight %}
 
-This way any instance of Dog can be replaced by any instance of Animal, and an error would be raised if we called `#walk` on an instance of Animal. 
+
+Other violations include different method signatures or errors (the child class produces an error in a method that the parent class does not)
