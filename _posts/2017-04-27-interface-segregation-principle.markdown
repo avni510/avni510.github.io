@@ -18,22 +18,22 @@ public interface Animal {
 public class Bird implements Animal {
 
   public void fly() {
-    System.out.println("I am flying")
+    System.out.println("I am flying");
   }
 
   public void walk() {
-    System.out.println("I am walking on a tree")
+    System.out.println("I am walking on a tree");
   }
 }
 
 public class Bee implements Animal {
 
   public void fly() {
-    System.out.println("I am buzzing")
+    System.out.println("I am buzzing");
   }
 
   public void walk() {
-    System.out.println("I am crawling on a flower")
+    System.out.println("I am crawling on a flower");
   }
 }
 
@@ -43,7 +43,7 @@ public class Dog implements Animal {
   public void fly() {}
 
   public void walk() {
-    System.out.println("I am walking on my four feet")
+    System.out.println("I am walking on my four feet");
   }
 }
 ```
@@ -65,22 +65,22 @@ public interface WalkableAnimal {
 public class Bird implements FlyableAnimal, WalkableAnimal {
 
   public void fly() {
-    System.out.println("I am flying")
+    System.out.println("I am flying");
   }
 
   public void walk() {
-    System.out.println("I am walking on a tree")
+    System.out.println("I am walking on a tree");
   }
 }
 
 public class Bee implements FlyableAnimal, WalkableAnimal {
 
   public void fly() {
-    System.out.println("I am buzzing")
+    System.out.println("I am buzzing");
   }
 
   public void walk() {
-    System.out.println("I am crawling on a flower")
+    System.out.println("I am crawling on a flower");
   }
 }
 
@@ -88,7 +88,7 @@ public class Bee implements FlyableAnimal, WalkableAnimal {
 public class Dog implements WalkableAnimal {
 
   public void walk() {
-    System.out.println("I am walking on my four feet")
+    System.out.println("I am walking on my four feet");
   }
 }
 ```
