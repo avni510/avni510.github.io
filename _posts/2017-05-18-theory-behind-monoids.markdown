@@ -19,7 +19,7 @@ This blogpost covers a brief background on the formal definition and theory behi
 
 It is a system that satisfies these three rules:
 
-1. Closure - Given a function with parameters, the type of the parameters and the type of the return value are the same 
+**Closure** - Given a function with parameters, the type of the parameters and the type of the return value are the same 
 
 An example is the `+` function
 ```clojure
@@ -37,7 +37,7 @@ It takes in booleans and returns a boolean
 
 The fact that a function's parameters and the function's return value is of the type same is known as closure
 
-2. Associativity - Given that your function abides by the closure property, the order of function operation does not matter, the same value will be returned
+**Associativity** - Given that your function abides by the closure property, the order of function operation does not matter, the same value will be returned
 
 Back to the `+` example
 ```clojure
@@ -61,7 +61,7 @@ Is the same as
 ; => true
 ```
 
-3. Identity - Given that your function abides by the closure property, there exists some value such that when you combine it with any other value you get back the original value as if nothing happened
+**Identity** - Given that your function abides by the closure property, there exists some value such that when you combine it with any other value you get back the original value as if nothing happened
 
 `+`  example:
 
