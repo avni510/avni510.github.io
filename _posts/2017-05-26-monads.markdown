@@ -4,13 +4,13 @@ title:  Monads
 date:   2017-05-26 10:00:00 -0600
 categories: Monads
 ---
-Monads allow you to chain together operations in your program without any unintended consequences. And they are a functional design pattern that are widely used and some languages even force you into using them like Haskell. I hope to build upon the definiton of a monad as the post goes on. 
+Monads allow you to chain together operations in your program without any unintended consequences. And they are a functional design pattern that are widely used and some languages even force you into using them like Haskell. I hope to build upon the definition of a monad as the post goes on. 
 
-An anagoly from the wikipedia, states they are something like an assembly line where the conveyor belts transports data between functional units and they are transformed one step at a time. During this process, the conveyor belt does not stop. 
+An analogy from the wikipedia, states they are something like an assembly line where the conveyor belts transports data between functional units and they are transformed one step at a time. During this process, the conveyor belt does not stop. 
 
-I like to think of them as a type with a wrapped value inside it. For example, a list can have data inside of it and that can be thought of as the value or it can be an empty list with no data, but the type is still a list. Some langauges, like Java 8, have the built in Optional type. There is data inside the optional like an integer or string or it could be empty with no data inside it. And the type is still an optional. Both Lists and Optionals are Monads.
+I like to think of them as a type with a wrapped value inside it. For example, a list can have data inside of it and that can be thought of as the value or it can be an empty list with no data, but the type is still a list. Some languages, like Java 8, have the built in Optional type. There is data inside the optional like an integer or string or it could be empty with no data inside it. And the type is still an optional. Both Lists and Optionals are Monads.
 
-Monads have a bind function that allows them to continue being transported down the assembly line. The bind function must abide by this defintion
+Monads have a bind function that allows them to continue being transported down the assembly line. The bind function must abide by this definition
 
 ```
 ma X (a -> mb) -> mb
