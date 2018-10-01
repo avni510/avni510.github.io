@@ -14,7 +14,7 @@ def upload()
   sh(
     'aws', 's3',
     'cp', '_site',
-    's3://avni-blog/',
+    's3://avnikothari.com/',
     '--recursive'
   )
 end
