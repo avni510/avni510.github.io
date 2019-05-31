@@ -2,7 +2,6 @@
 layout: post
 title:  Anonymous Functions 
 date:   2017-02-21 11:00:00 -0600
-categories: Clojure Anonymous Functions
 ---
 
 There are a few ways to denote a function in Clojure. The most common way is something like this

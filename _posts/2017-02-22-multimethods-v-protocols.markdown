@@ -2,7 +2,6 @@
 layout: post
 title:  Multimethods Vs. Protocols
 date:   2017-02-22 11:16:00 -0600
-categories: Clojure Polymorphism
 ---
 
 

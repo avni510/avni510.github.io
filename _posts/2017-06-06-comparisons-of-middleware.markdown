@@ -2,7 +2,6 @@
 layout: post
 title:  Comparisons of Middleware 
 date:   2017-06-06 09:00:00 -0600
-categories: Java Server
 ---
 A few weeks back I had a [blogpost](http://avni510.github.io/middleware/2017/05/19/what-is-middleware.html) that briefly defines middleware. For this post I wanted to go a bit further into middleware, how I used it, and different ways it can be used. 
 

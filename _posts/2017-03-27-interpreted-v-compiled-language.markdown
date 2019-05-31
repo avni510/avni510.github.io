@@ -2,7 +2,6 @@
 layout: post
 title:  Interpreter Vs. Compiler
 date:   2017-03-24 09:20:00 -0600
-categories: Java
 ---
 Interpretation and compilation are implementations of a language rather than a property of a language. It is, in fact, not correct to say a specific language is compiled. A language can either be executed through a compiler or interpreter, it's just a matter of implementation. For example, Python code is usually executed through an interpreter, but it is also possible to create a compiler to execute the same Python code. 
 

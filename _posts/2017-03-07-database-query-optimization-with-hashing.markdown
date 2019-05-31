@@ -2,7 +2,6 @@
 layout: post
 title:  Database Query Optimization with Hashing
 date:   2017-03-07 09:20:00 -0600
-categories: Hash Functions Examples
 ---
 
 Hash functions can be particularly useful for searching through a database with a large amount of data. For example, lets say you have a very large table of name and phone numbers like this

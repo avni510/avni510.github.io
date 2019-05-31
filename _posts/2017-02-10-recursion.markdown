@@ -2,7 +2,6 @@
 layout: post
 title:  Recursion
 date:   2017-02-10 11:16:00 -0600
-categories: Recursion
 ---
 
 Recursion is often found in many built in functions within Clojure for example in `filter` and `map`. This blogpost will specifically cover linear and tree recursion.

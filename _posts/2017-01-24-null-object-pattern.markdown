@@ -2,7 +2,6 @@
 layout: post
 title:  Null Object Pattern
 date:   2017-01-24 11:16:00 -0600
-categories: Sandi Metz
 ---
 Today I watched the [Nothing is Something](https://www.youtube.com/watch?v=OMPfEXIlTVE) talk by Sandi Metz. During the first half of her talk she goes into the Null Object Pattern. This pattern specifically handles how to deal with nil or null values in your program. When over looked they can cause majors errors in your code and should be handled carefully. Here's an example when nil can cause a problem 
 

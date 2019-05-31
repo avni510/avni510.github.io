@@ -2,7 +2,6 @@
 layout: post
 title:  Lazy Sequences
 date:   2017-02-16 14:00:00 -0600
-categories: Lazy Sequences
 ---
 Lazy sequences are powerful tools in Clojure. But before we dive further into lazy sequences I want to briefly go over the differences between a collection and sequence in Clojure. 
 

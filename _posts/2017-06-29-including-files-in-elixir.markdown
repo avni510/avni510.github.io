@@ -2,7 +2,6 @@
 layout: post
 title:  Including Files in Elixir
 date:   2017-06-29 08:51:00 -0600
-categories: Elixir
 ---
 When I first created my Elixir Phoenix project, I immediately noticed the wide use of `alias`, `import`, and `use`. While trying to understand the preexisting code, it led me to feel quite confused. Here's a brief summary of what I learned, although for more information see the [documentation](https://elixir-lang.org/getting-started/alias-require-and-import.html)
 

@@ -2,7 +2,6 @@
 layout: post
 title:  SQL Query Optimization
 date:   2017-02-01 10:00:00 -0600
-categories: SQL, Database
 ---
 This blogpost will specifically cover cross joins and how they can lead to slow queries. Cross joins also known as a Cartesian Product joins all rows of each table together. The wikipedia page on a [Cartesian Product](https://en.wikipedia.org/wiki/Cartesian_product) has a good visual of what that would be mean. 
 

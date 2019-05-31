@@ -2,7 +2,6 @@
 layout: post
 title:  Loading Code in Ruby
 date:   2017-01-13 10:00:00 -0600
-categories: Ruby, load code
 ---
 
 You may have seen `$LOAD_PATH` written out in Ruby programs. `$LOAD_PATH` is an array where each element in the array represents a file directory where files live. Each time you run a Ruby file `$LOAD_PATH` requires all the files in those directories even if `$LOAD_PATH` is not explicitly written out in your program. To see a list of default directories your Ruby program runs you can run `irb`, enter `puts $LOAD_PATH`. This will output a path of file directories that will be loaded upon running your ruby program. For me it outputs

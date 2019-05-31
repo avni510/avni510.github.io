@@ -2,7 +2,6 @@
 layout: post
 title:  SQL Prepare Statement
 date:   2017-02-02 11:16:00 -0600
-categories: SQL
 ---
 The `PREPARE` statement is a useful and widely used statement in SQL. The way it works is it essentially creates a template of the query you would like to run. Instead of the actual values being passed in, placeholders are passed in (similar to parameters). Here's an example
 

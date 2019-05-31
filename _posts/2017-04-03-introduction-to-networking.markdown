@@ -2,7 +2,6 @@
 layout: post
 title:  Introduction to Networking
 date:   2017-04-03 11:20:00 -0600
-categories: Server
 ---
 <!--Socket
   * one end point of a two-way communication

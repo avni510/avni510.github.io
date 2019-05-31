@@ -2,7 +2,6 @@
 layout: post
 title:  Elixir Processes 
 date:   2017-06-27 11:51:00 -0600
-categories: Elixir
 ---
 
 Elixir's power comes from ability to handle concurrency very well. This blogpost and the next blogpost cover some basics to get started with concurrency in Elixir. 

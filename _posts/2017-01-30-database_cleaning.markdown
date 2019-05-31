@@ -2,7 +2,6 @@
 layout: post
 title:  Database Cleaning
 date:   2017-01-30 15:00:00 -0600
-categories: SQL, Database
 ---
 
 If you are using a database for your application you are probably writing some tests to verify the correct results are written to your database. In my case, I set up a test database that I write results out to and verify the results. I initially made the mistake of not cleaning my test database after each test and ran into the same result being added to my database mulitple times. I then started to realize the importance of database cleaning for your tests - it allows each test to be run independently of each other. I started looking into different database cleaning methods and here are a few I found: 

@@ -2,7 +2,6 @@
 layout: post
 title:  Open and Closed Principle
 date:   2017-01-11 11:09:00 -0600
-categories: SOLID Principles
 ---
 This is the "O" in the SOLID Principles of the five basic principles of object orientated design. The official definition is "software entities (classes, modules, functions, etc.) should be open for extension, but closed for modification." This means that a developer should be able to make changes to a program without making changes to the classes themselves. This may sound counter intuitive, but perhaps an example will help: 
 

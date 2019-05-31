@@ -1,5 +1,0 @@
-- View is run every time it's referenced in a query
-- Postgres SQL Rules
-  -`CREATE RULE`
-  - "causes additional commands to be executed when a given command on a given table is executed"
-  - they are used to create table views

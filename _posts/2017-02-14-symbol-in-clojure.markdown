@@ -2,7 +2,6 @@
 layout: post
 title:  Symbols in Clojure
 date:   2017-02-14 15:40:00 -0600
-categories: Clojure Symbols
 ---
 
 Symbols in Clojure are frequently used. Clojure.org states that symbols are used to "refer to function parameters, let bindings, class names, and global vars". Essentially symbols are a piece of data. Symbols are not storage locations, but instead they are used to refer to the value of a variable. It can also be said that symbols are used as identifiers within the language. 

@@ -2,7 +2,6 @@
 layout: post
 title:  Github Syncing
 date:   2017-01-23 16:16:00 -0600
-categories: Github
 ---
 
 Commonly used git commands are `git fetch` and `git pull`. Here's a bit more about how these commands work. 

@@ -2,7 +2,6 @@
 layout: post
 title:  Enumerable Module in Ruby
 date:   2017-01-17 16:16:00 -0600
-categories: Ruby Enumerable Module
 ---
 
 The Enumerable Module is a mixin. The methods from the module are used in the Array and Hash classes. You can actually use the Enumerable module in any of your classes as long as you have `#each` defined. All the methods in the module create a new data structure - ex: an array or hash - and the old one is not mutated. You would want to use the methods from the Enumerable module when you are iterating through a collection of objects and manipulating the data in that collection. 

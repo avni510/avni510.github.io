@@ -2,7 +2,6 @@
 layout: post
 title:  Tail Recursive Minimax
 date:   2017-03-24 09:20:00 -0600
-categories: Minimax
 ---
 
 My post a few weeks ago about implementing minimax in Clojure was written in a linear recursive way. Another way to write the same algothrim is in a tail recursive manner. Both have their pluses and minuses which I'll discuss further into the post. But I want to go through a brief explantation on how to think about this algothrim tail recursively.

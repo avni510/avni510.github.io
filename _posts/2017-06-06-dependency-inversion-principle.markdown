@@ -2,7 +2,6 @@
 layout: post
 title:  Dependency Inversion Principle
 date:   2017-06-06 09:00:00 -0600
-categories: SOLID principles
 ---
 This stands for the "D" in the SOLID principles. Formally the definition states: "High level modules should not depend on low-level modules, instead both should depend on abstractions" and "abstractions should not depend on details"
 

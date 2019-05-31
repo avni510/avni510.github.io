@@ -2,7 +2,6 @@
 layout: post
 title:  Theory Behind Monoids
 date:   2017-05-18 11:20:00 -0600
-categories: Functional Programming
 ---
 
 <!--

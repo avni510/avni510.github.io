@@ -2,7 +2,6 @@
 layout: post
 title:  Threads
 date:   2017-02-07 16:16:00 -0600
-categories: Threads
 ---
 <!--
 * allow the program to execute sequential actions or multiple actions at once 

@@ -2,7 +2,6 @@
 layout: post
 title:  Interface Segregation Principle
 date:   2017-04-27 11:20:00 -0600
-categories: SOLID Principles
 ---
 
 The interface segregation principle is the "I" in the SOLID Principles. Bob Martin defined it as "Many client specific interfaces are better than one general purpose interface." In other words, clients should not be forced to implement interfaces they don't use. Having one large, bloated interface with methods that implementing classes don't require can be dangerous for a few reasons. Firstly, to a client it can signal that an implementing class may have certain behavior, which may not be the case. So it can misrepresent your intent. Secondly, if the interface changes it can cause unncessary work for the classes that implement the interface, but don't need all the methods from that interface. The solution to this problem is to have your methods split up into multiple interfaces rather than having one large interface. 

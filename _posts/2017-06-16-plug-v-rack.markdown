@@ -2,7 +2,6 @@
 layout: post
 title:  Plug Vs. Rack
 date:   2017-06-16 09:00:00 -0600
-categories: Elixir and Phoenix
 ---
 I've recently been dabbling a bit into Elixir and Phoenix. The often used analogy is plug is to Phoenix what rack is to Rails. As I was trying to understand plug I often tried to compare it to something that I was a little more familiar with - Rack. Here's a bit about what I learned when I compared them. 
 

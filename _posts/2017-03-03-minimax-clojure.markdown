@@ -2,7 +2,6 @@
 layout: post
 title:  Minimax 
 date:   2017-03-03 09:20:00 -0600
-categories: Minimax Clojure 
 ---
 
 This week I spent most of my time implementing Minimax in Clojure. Upon first approaching the problem I thought my implementation would be similar to my first implementation of minimax in Ruby. But to my surprise the Clojure implementation came out quite different. 

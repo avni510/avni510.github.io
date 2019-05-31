@@ -2,7 +2,6 @@
 layout: post
 title:  Hash Functions
 date:   2017-03-03 09:20:00 -0600
-categories: Hash Functions
 ---
 
 Recently I've been reading about what hash functions are and how they work. 

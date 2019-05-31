@@ -2,7 +2,6 @@
 layout: post
 title:  Ruby Mutability
 date:   2017-02-06 16:16:00 -0600
-categories: Ruby Mutability
 ---
 This post will cover the differences between immutability and mutability in Ruby. 
 

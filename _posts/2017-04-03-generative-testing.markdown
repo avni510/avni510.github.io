@@ -2,7 +2,6 @@
 layout: post
 title:  Brief Introduction to Generative Testing in Clojure
 date:   2017-04-03 11:20:00 -0600
-categories: Clojure
 ---
 
 In [Eric Normand's talk](https://www.youtube.com/watch?v=r5i_OiZw6Sw&list=PLZdCLR02grLp4W4ySd1sHPOsK83gvqBQp&index=18) at Clojure/west he covers the benefits of generative testing. He specifically covers Clojure, although generative testing can be used for any language. In unit testing the engineer comes up with the different scenarios that a user could possibly select and asserts that their program works in the correct way. With generative testing, the engineer defines the properties the result should have and the test runner generates randomized data to check against. In Eric's talk he creates a simple key-value database with some basic operations. Here are those operations

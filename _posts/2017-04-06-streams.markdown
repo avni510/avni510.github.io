@@ -2,7 +2,6 @@
 layout: post
 title:  Streams
 date:   2017-04-06 11:20:00 -0600
-categories: Server
 ---
 <!--
 * streams with try/ catch blocks? importance? 

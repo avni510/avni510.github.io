@@ -2,7 +2,6 @@
 layout: post
 title:  Liskov Substitution Principle
 date:   2017-01-16 11:09:00 -0600
-categories: SOLID Principles
 ---
 
 Liskov Substitution Principle is the "L" in the SOLID Principles. It states if you have a parent class and a child class, any instance of the child class should be able to replace any instance of the parent class without having unexpected behaviors.

@@ -2,7 +2,6 @@
 layout: post
 title:  Rake
 date:   2017-01-24 11:16:00 -0600
-categories: build language
 ---
 
 For my next assignment with the time logger application I have been exploring and learning about Rake. Rake is a build language and it is also a Domain Specific Language (DSL). It executes `tasks` in a dependency way (ex: do this first then that). One way to use it is when you need setup for your program before running it. For example, in my assignment I need to create a database table and schema before the user can start using the program. This way when they log their time, data will be saved in a Postgresql database. The unique part about Rake is the fact that Ruby code can be written directly in a Rakefile. This differs significantly from other build languages. To use it on your project you must install the rake gem. 

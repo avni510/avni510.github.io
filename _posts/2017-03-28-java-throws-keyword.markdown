@@ -2,7 +2,6 @@
 layout: post
 title:  Throws keyword in Java
 date:   2017-03-24 09:20:00 -0600
-categories: Java
 ---
 
 <!---

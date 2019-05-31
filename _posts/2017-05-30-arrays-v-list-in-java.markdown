@@ -2,7 +2,6 @@
 layout: post
 title:  Arrays vs. ArrayLists in Java
 date:   2017-05-30 10:00:00 -0600
-categories: Java
 ---
 
 In Java, List is an interface. Two common classes that implement the List interface are ArrayList and LinkedList. The Java documentation states, the classes that implement the List interface are an ordered collection. It allows for operations such as accessing elements and inserting each element at a specific point. 
