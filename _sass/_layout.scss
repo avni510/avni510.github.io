@@ -27,6 +27,13 @@ ul.default {
 	@extend %default-ul;
 }
 
+img + em {
+  font-style: normal;
+  display: inherit;
+  text-align: center;
+  font-size: 90%;
+}
+
 code {
 	background-color: #eee;
 	display: inline-block;
