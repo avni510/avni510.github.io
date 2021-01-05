@@ -1,15 +1,15 @@
 ---
 layout: post
 title:  React Redux
-date:   2020-12-10 08:51:00 -0600
+date:   2020-12-31 08:51:00 -0600
 ---
 
 The next step of the redux journey was to build out [react-redux](https://react-redux.js.org/). Feel free to have a more detailed
 look at my code [here](https://github.com/avni510/react-website). React Redux allows us to
 inject the state into our components. I also decided to inject in commands which are in charge of dispatching actions
 and making an API call. Dispatching actions will update our store. I'll explain this further in another blogpost, but right now we
-want to inject in the state and a container that contains commands into our components. In this example here are the types
-for `State` and `AppContainer`.
+want to inject in the state and a container that contains commands into our components. Inject in these values into props allows us to have a greater chance
+of creating a stateless component. In this example there are the types for `State` and `AppContainer`.
 
 ```typescript
 export type AppContainer = {
@@ -117,7 +117,7 @@ type Props = {
 
 `isLoading` and `photo` come from the state and `photoCommands` comes from the container. The component that has these props is called `PhotoTest`. We're going to create a helper function called
 `connect` which will take in the target component - `PhotoTest`, a function that will inject in specific props from the container, and a function that will inject in the specific props from the state.
-`connect` will return a new component that has the appropiate values of the props injected in.
+`connect` will return a new component that has the appropriate values of the props injected in.
 
 ```
 export default connect(
@@ -195,7 +195,7 @@ export function injectState<TGlobalState, TProps>(func: StateInjector<TGlobalSta
 }
 ```
 
-The implementation for `injectCommands` is pratically identical. 
+The implementation for `injectCommands` is practically identical. 
 
 ```javascript
 export type CommandsInjector<TContainer, TProps> = (container: TContainer) =>
@@ -237,7 +237,7 @@ export function injectCommands<TContainer, TProps>(func: CommandsInjector<TConta
 So now we're able to take a `Target` component and give it values from the state and container through the `context`. 
 
 Based on the fact that `injectState` and `injectCommands` follow the same higher order function pattern (returns a function that takes in the `Target` component). 
-The `connect` function now has a simple implemention using `reduce`.
+The `connect` function now has a simple implementation using `reduce`.
 
 ```
 export function connect<TProps>(
