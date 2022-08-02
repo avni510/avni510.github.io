@@ -1,0 +1,31 @@
+image: assets/img/smile.png
+username: Avni Kothari
+description: Graduate student at University of California at San Diego
+webpage: https://chrjabs.github.io
+# experience: # Remove for hiding the experience section
+#   - start: 2017-05-03
+#     end: 2018-05-06
+#     experience : company name, title
+# interests: # Remove for hiding the interests section
+#   - Interest 1
+#   - Interest 2
+# skills: # Remove for hiding the skills section
+#   - skill: HTML5 & CSS
+#     value: 85  # Percent value
+social:
+  email: akothari@ucsd.edu
+  orcid: 
+  scholar: 
+  publons: 
+  research_gate: 
+  linkedin:  https://www.linkedin.com/in/avni-kothari-aa7b5949/
+  github: avni510
+  gitlab: 
+  bitbucket: 
+  google_plus:
+  twitter: 
+  youtube:
+  facebook:
+  instagram:
+# awards: # Remove for hiding the awards section
+#   - "This is an award I got"
