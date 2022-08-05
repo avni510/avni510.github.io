@@ -1,0 +1,97 @@
+I"l:<h2 id="result-type">Result Type</h2>
+
+<p><code class="language-plaintext highlighter-rouge">Result.java</code> is a custom type. Code can be found <a href="https://github.com/avni510/java-result-type/tree/master">here</a> It is heavily modeled off the Result Type that exists in other functional and ML Languages (ex: Elm, Haskell, Rust).</p>
+
+<p>As described by the Rust documentation, “Result is a richer version of the Option type that describes possible error instead of possible absence.” Particularly in Java this gives the developer more control over when they would like to throw an error or bubble up an error.</p>
+
+<h3 id="usage">Usage</h3>
+<h4 id="basics">Basics</h4>
+<p>A <code class="language-plaintext highlighter-rouge">Result</code> should be defined with the types of the potential successful object and the potential failure object. Ex: <code class="language-plaintext highlighter-rouge">Result&lt;Integer, String&gt;</code>.  If the computation is successful it should should use <code class="language-plaintext highlighter-rouge">.ok</code> like <code class="language-plaintext highlighter-rouge">Result.ok(5)</code> and failures should be returned with error like <code class="language-plaintext highlighter-rouge">Result.error("Unable to parse into integer")</code>.</p>
+
+<p>A <code class="language-plaintext highlighter-rouge">Result</code> can also be <code class="language-plaintext highlighter-rouge">Void</code> meaning the computation was successful, but there was no return value. The type would be defined like this <code class="language-plaintext highlighter-rouge">Result&lt;Void, String&gt;</code>. Below is an example:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">if</span> <span class="o">(</span><span class="n">creationIsSuccessful</span><span class="o">)</span> <span class="o">{</span>
+   <span class="k">return</span> <span class="nc">Result</span><span class="o">.</span><span class="na">ok</span><span class="o">();</span>
+ <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+   <span class="k">return</span> <span class="nc">Result</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"Could not create"</span><span class="o">);</span>
+ <span class="o">}</span>
+</code></pre></div></div>
+
+<p>To get the successful object. Please first check if the <code class="language-plaintext highlighter-rouge">Result</code> is successful by using the <code class="language-plaintext highlighter-rouge">.isSuccessful()</code> function. The successful object can be retrieved with <code class="language-plaintext highlighter-rouge">.get()</code>. Ex:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nc">Result</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="nc">Result</span><span class="o">.</span><span class="na">ok</span><span class="o">(</span><span class="mi">5</span><span class="o">)</span>
+
+ <span class="k">if</span> <span class="o">(</span><span class="n">result</span><span class="o">.</span><span class="na">isSuccessful</span><span class="o">())</span> <span class="o">{</span>
+   <span class="nc">Integer</span> <span class="n">value</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="na">get</span><span class="o">();</span>
+ <span class="o">}</span>
+</code></pre></div></div>
+<p>To get the error. Please first check if the <code class="language-plaintext highlighter-rouge">Result</code> is successful by using the <code class="language-plaintext highlighter-rouge">.isSuccessful()</code> function. The error object can be retrieved with <code class="language-plaintext highlighter-rouge">.getError()</code>. Ex:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nc">Result</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="nc">Result</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"Could not parse"</span><span class="o">)</span>
+
+ <span class="k">if</span> <span class="o">(</span><span class="n">result</span><span class="o">.</span><span class="na">isSuccessful</span><span class="o">())</span> <span class="o">{</span>
+   <span class="nc">Integer</span> <span class="n">value</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="na">get</span><span class="o">();</span>
+ <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+   <span class="nc">String</span> <span class="n">error</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="na">getError</span><span class="o">();</span>
+ <span class="o">}</span>
+</code></pre></div></div>
+
+<h4 id="additional-functionality">Additional functionality</h4>
+<h5 id="map"><code class="language-plaintext highlighter-rouge">.map()</code></h5>
+
+<p>This should be used when transforming the successful type of a <code class="language-plaintext highlighter-rouge">Result</code> into another type. Ex: <code class="language-plaintext highlighter-rouge">Result&lt;Integer, String&gt; -&gt; Result&lt;String, String&gt;</code>.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Result</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">originalResult</span> <span class="o">=</span> <span class="nc">Result</span><span class="o">.</span><span class="na">ok</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+<span class="nc">Result</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">newResult</span> <span class="o">=</span>
+  <span class="n">result</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">value</span> <span class="o">-&gt;</span> <span class="nc">Integer</span><span class="o">.</span><span class="na">toString</span><span class="o">(</span><span class="n">value</span><span class="o">));</span>
+
+<span class="o">-&gt;</span> <span class="n">newResult</span><span class="o">.</span><span class="na">isSuccessful</span><span class="o">()</span> <span class="o">-&gt;</span> <span class="n">returns</span> <span class="kc">true</span>
+<span class="o">-&gt;</span> <span class="n">newResult</span><span class="o">.</span><span class="na">get</span><span class="o">()</span> <span class="o">-&gt;</span> <span class="n">returns</span> <span class="s">"1"</span>
+</code></pre></div></div>
+<p>If the originalResult is an error the <code class="language-plaintext highlighter-rouge">.map</code> is not applied and <code class="language-plaintext highlighter-rouge">originalResult</code> remains unchanged. Ex:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Result</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">originalResult</span> <span class="o">=</span> <span class="nc">Result</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"Error message"</span><span class="o">);</span>
+<span class="nc">Result</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">newResult</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">value</span> <span class="o">-&gt;</span> <span class="n">value</span> <span class="o">*</span> <span class="mi">2</span><span class="o">);</span>
+
+<span class="o">-&gt;</span> <span class="n">newResult</span><span class="o">.</span><span class="na">isSuccessful</span><span class="o">()</span> <span class="o">-&gt;</span> <span class="n">returns</span> <span class="kc">false</span>
+<span class="o">-&gt;</span> <span class="n">newResult</span><span class="o">.</span><span class="na">getError</span><span class="o">()</span> <span class="o">-&gt;</span> <span class="n">returns</span> <span class="s">"Error Message"</span>
+</code></pre></div></div>
+
+<h5 id="andthen"><code class="language-plaintext highlighter-rouge">.andThen()</code></h5>
+<p>This should be used when chaining together functions that all return <code class="language-plaintext highlighter-rouge">Result</code> types and are conditional on the previous function call being successful.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Result</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">resultOne</span> <span class="o">=</span> <span class="nc">Result</span><span class="o">.</span><span class="na">ok</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+
+<span class="nc">Result</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">newResult</span> <span class="o">=</span>
+  <span class="n">resultOne</span><span class="o">.</span><span class="na">andThen</span><span class="o">(</span><span class="n">value</span> <span class="o">-&gt;</span> <span class="nc">Result</span><span class="o">.</span><span class="na">ok</span><span class="o">(</span><span class="nc">Integer</span><span class="o">.</span><span class="na">toString</span><span class="o">(</span><span class="n">value</span><span class="o">)))</span>
+           <span class="o">.</span><span class="na">andThen</span><span class="o">(</span><span class="n">value</span> <span class="o">-&gt;</span> <span class="nc">Result</span><span class="o">.</span><span class="na">ok</span><span class="o">(</span><span class="n">value</span><span class="o">.</span><span class="na">concat</span><span class="o">(</span><span class="s">", 2, 3"</span><span class="o">)));</span>
+
+<span class="o">-&gt;</span> <span class="n">newResult</span><span class="o">.</span><span class="na">isSuccessful</span><span class="o">()</span> <span class="o">-&gt;</span> <span class="n">returns</span> <span class="kc">true</span>
+<span class="o">-&gt;</span> <span class="n">newResult</span><span class="o">.</span><span class="na">get</span><span class="o">()</span> <span class="o">-&gt;</span> <span class="n">returns</span> <span class="s">"1, 2, 3"</span>
+</code></pre></div></div>
+<p>The function <code class="language-plaintext highlighter-rouge">value -&gt; Result.ok(value.concat(", 2, 3"))</code> is conditional on the value being a String. If any of the functions return a <code class="language-plaintext highlighter-rouge">Result.error</code> none of the other functions are applied. Ex:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Result</span><span class="o">&lt;</span><span class="nc">ArrayList</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">newResult</span> <span class="o">=</span>
+  <span class="n">resultOne</span><span class="o">.</span><span class="na">andThen</span><span class="o">(</span><span class="n">value</span> <span class="o">-&gt;</span> <span class="nc">Result</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"Error Message"</span><span class="o">))</span>
+           <span class="o">.</span><span class="na">andThen</span><span class="o">(</span><span class="n">value</span> <span class="o">-&gt;</span> <span class="nc">Result</span><span class="o">.</span><span class="na">ok</span><span class="o">(</span><span class="n">value</span><span class="o">.</span><span class="na">concat</span><span class="o">(</span><span class="s">", 2, 3"</span><span class="o">)));</span>
+
+<span class="o">-&gt;</span> <span class="n">newResult</span><span class="o">.</span><span class="na">isSuccessful</span><span class="o">()</span> <span class="o">-&gt;</span> <span class="n">returns</span> <span class="kc">false</span>
+<span class="o">-&gt;</span> <span class="n">newResult</span><span class="o">.</span><span class="na">getError</span><span class="o">()</span> <span class="o">-&gt;</span> <span class="n">returns</span> <span class="s">"Error Message"</span>
+</code></pre></div></div>
+<p>The block <code class="language-plaintext highlighter-rouge">.andThen(value -&gt; Result.ok(value.concat(", 2, 3")))</code> does not run and instead the <code class="language-plaintext highlighter-rouge">Result.error</code> is returned.</p>
+
+<p>If you are not concerned with the value returned the double underscore can be used to denote this. Ex:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Result</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">newResult</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="na">andThen</span><span class="o">(</span><span class="n">__</span> <span class="o">-&gt;</span> <span class="n">func1</span><span class="o">())</span>
+                                         <span class="o">.</span><span class="na">andThen</span><span class="o">(</span><span class="n">__</span> <span class="o">-&gt;</span> <span class="n">func2</span><span class="o">());</span>
+</code></pre></div></div>
+
+<h3 id="summary">Summary</h3>
+
+<p>Instead of throwing exceptions, functions can return a <code class="language-plaintext highlighter-rouge">Result</code> type instead, which contains a corresponding error message. This allows the developer to decide when/ if they would like to throw in a top level method or display an appropriate error message to the user.</p>
+
+<h3 id="additional-reading">Additional Reading</h3>
+<p><a href="https://doc.rust-lang.org/rust-by-example/error/result.html">Rust Result Type</a></p>
+
+<p><a href="https://package.elm-lang.org/packages/elm/core/latest/Result">Elm Result Type</a></p>
+:ET

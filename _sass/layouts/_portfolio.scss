@@ -7,10 +7,9 @@
     .img-wrap {
       text-align: center;
       .img {
-        overflow: hidden;
         display: inline-block;
-        width: 180px;
-        height: 180px;
+        width: 250px;
+        height: 250px;
         border-radius: 15px;
         img {
           width: 100%;
@@ -22,14 +21,6 @@
       .description {
         margin: 10px 0;
         font-size: 0.95rem;
-        a {
-          color: #fff;
-          border-bottom: 1px dashed;
-          &:hover  {
-              border-bottom-style: solid;
-              text-decoration: none;
-          }
-        }
       }
       @media (max-width: 767px) {
         margin-top: 15px;

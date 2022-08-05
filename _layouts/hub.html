@@ -16,21 +16,11 @@ layout: page
       {{ page.description | markdownify }}
       <section class="links">
         <h2>Links</h2>
-        {% if page.citekey %}
-          {% nocite page.citekey %}
-          {% bibliography --cited --template pubhublinkstemplate %}
-        {% else %}
           <ol class="link-list">
             {% include hubadditionallinks.html %}
           </ol>
-        {% endif %}
       </section>
       {{ content }}
-      <section class="abs-bibtex">
-        {% if page.citekey %}
-          {% bibliography --cited --template pubhubabsbibtex %}
-        {% endif %}
-      </section>
     </section>
   </div>
 </div>
