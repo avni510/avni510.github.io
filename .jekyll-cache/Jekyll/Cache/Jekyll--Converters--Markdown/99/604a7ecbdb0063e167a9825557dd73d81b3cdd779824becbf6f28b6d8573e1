@@ -1,0 +1,8 @@
+I"x<p>In order to have a better understanding of how redux works and the benefits of it I decided to rebuild it with some slight modifications 
+inspired by one of my mentors. This post does assume knowledge of the basics of redux. It will go into the implementation of redux and hopefully clarify 
+any questions you may have about how it works.  I didn’t embark on rebuilding all the parts
+like middleware, but I wanted to rebuild the bulk of it. I decided to use Typescript which is what the original redux is written in. 
+This post will go through explaining how it works and some of the benefits I saw to this model. 
+I’ll also go through the tests written for it
+so that you will be able to see how it’s used. The code and tests can be found <a href="https://github.com/avni510/react-website">here</a> under <code class="language-plaintext highlighter-rouge">src/state/</code></p>
+:ET

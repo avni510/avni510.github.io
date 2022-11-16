@@ -1,0 +1,98 @@
+---
+layout: post
+title:  Rake
+tags: [Sample Post, Welcome to the Grape Theme!]
+author: Avni Kothari 
+comments : False
+---
+
+For my next assignment with the time logger application I have been exploring and learning about Rake. Rake is a build language and it is also a Domain Specific Language (DSL). It executes `tasks` in a dependency way (ex: do this first then that). One way to use it is when you need setup for your program before running it. For example, in my assignment I need to create a database table and schema before the user can start using the program. This way when they log their time, data will be saved in a Postgresql database. The unique part about Rake is the fact that Ruby code can be written directly in a Rakefile. This differs significantly from other build languages. To use it on your project you must install the rake gem. 
+
+Here's an example. Lets say you want to cook a recipe. Recipes have specific instructions that must be followed in order. 
+
+{% highlight ruby %}
+task :gather_vegetables do
+ puts "I took out the vegetables from my refrigerator"  
+end
+
+task :cut_vegetables => :gather_vegetables do
+  puts "I cut the vegetables"
+end
+
+task :cook_vegetables => :cut_vegetables do
+  puts "I sauteed the veggies" 
+end
+
+task :mix_sauces => :cook_vegetables do
+  puts "I mixed in the sauce"
+end
+
+task :cook_food => :mix_sauces do
+  puts "the meal is ready"
+end
+{% endhighlight %}
+
+You can run a Rakefile through the command line by running `rake <task_name>` 
+
+```
+avnikothari@Avnis-MacBook-Air:~$ rake cook_food
+I took out the vegetables from my refridgeator
+I cut the vegetables
+I sauted the veggies
+I mixed in the sauce
+the meal is ready
+```
+`task` specifies that we want it to execute the part inside the `do` and `end` blocks. The symbol `=>` denotes the fact that there is a depedency on that specfic task. So it will not execute that task before executing the dependency, and multiple dependencies can be written in square brackets like this
+
+{% highlight ruby %}
+task :gather_vegetables do
+ puts "I took out the vegetables from my refrigerator"  
+end
+
+task :cut_vegetables do
+  puts "I cut the vegetables"
+end
+
+task :cook_vegetables do
+  puts "I sauteed the veggies" 
+end
+
+task :mix_sauces do
+  puts "I mixed in the sauce"
+end
+
+task :cook_food => [:gather_vegetables, :cut_vegetables, :cook_vegetables, :mix_sauces] do
+  puts "the meal is ready"
+end
+{% endhighlight %}
+
+When we run `rake cook_food` we will receive the same output as above. 
+
+Rake tasks can also be namespaced for organizational purposes. Like this
+
+{% highlight ruby %}
+namespace :recipe
+  task :gather_vegetables do
+   puts "I took out the vegetables from my refrigerator"  
+  end
+
+  task :cut_vegetables do
+    puts "I cut the vegetables"
+  end
+
+  task :cook_vegetables do
+    puts "I sauteed the veggies" 
+  end
+
+  task :mix_sauces do
+    puts "I mixed in the sauce"
+  end
+
+  task :cook_food => [:gather_vegetables, :cut_vegetables, :cook_vegetables, :mix_sauces] do
+    puts "the meal is ready"
+  end
+end
+{% endhighlight %}
+
+We would then run `rake recipe::cook_food` to have to same output as above. 
+

@@ -1,0 +1,61 @@
+I"�<p>This stands for the “D” in the SOLID principles. Formally the definition states: “High level modules should not depend on low-level modules, instead both should depend on abstractions” and “abstractions should not depend on details”</p>
+
+<p>So this means the abstraction layer should between the high level and low level classes, visually it would look something like this:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>high level classes -&gt; abstraction layer &lt;- low level classes
+</code></pre></div></div>
+
+<p>This allows flexibility for changing out implementation details, and extensibility within in your application. Lets take a look a simple example related to my HTTP server.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">HelloWorldHandler</span> <span class="o">{</span>
+
+  <span class="kd">public</span> <span class="nc">Response</span> <span class="nf">generate</span><span class="o">(</span><span class="nc">Request</span> <span class="n">request</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// returns an HTTP Response with the body set as Hello World</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Router</span> <span class="o">{</span>
+  
+  <span class="kd">public</span> <span class="nc">Response</span> <span class="nf">getHttpResponse</span><span class="o">(</span><span class="nc">HelloWorldHandler</span> <span class="n">helloWorldHandler</span><span class="o">,</span> <span class="nc">Request</span> <span class="n">request</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">helloWorldHandler</span><span class="o">.</span><span class="na">generate</span><span class="o">();</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">getHttpResponse</code> is tightly coupled to the specific implementation of helloWorldHandler</p>
+
+<p>The problem with this design is that if I want to add more handlers the <code class="language-plaintext highlighter-rouge">getHttpResponse</code> method only takes in the <code class="language-plaintext highlighter-rouge">HelloWorldHandler</code>. Here’s a way that we can fix that.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Handler</span> <span class="o">{</span>
+  <span class="nc">Response</span> <span class="nf">generate</span><span class="o">(</span><span class="nc">Request</span> <span class="n">request</span><span class="o">);</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">HelloWorldHandler</span> <span class="kd">implements</span> <span class="nc">Handler</span> <span class="o">{</span>
+
+  <span class="kd">public</span> <span class="nc">Response</span> <span class="nf">generate</span><span class="o">(</span><span class="nc">Request</span> <span class="n">request</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// returns an HTTP Response with the body set as Hello World</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ErrorHandler</span> <span class="kd">implements</span> <span class="nc">Handler</span> <span class="o">{</span>
+
+  <span class="kd">public</span> <span class="nc">Response</span> <span class="nf">generate</span><span class="o">(</span><span class="nc">Request</span> <span class="n">request</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// returns an HTTP Response with a 404 Not Found as the status code</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Router</span> <span class="o">{</span>
+  
+  <span class="kd">public</span> <span class="nc">Response</span> <span class="nf">getHttpResponse</span><span class="o">(</span><span class="nc">Handler</span> <span class="n">handler</span><span class="o">,</span> <span class="nc">Request</span> <span class="n">request</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">handler</span><span class="o">.</span><span class="na">generate</span><span class="o">();</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>We can create an Interface that all Handlers implement, and change the first argument type of <code class="language-plaintext highlighter-rouge">getHttpResponse</code> to be the interface <code class="language-plaintext highlighter-rouge">Handler</code>. This allows for new Handlers to be created and used and it also allows for all classes that implement the Handler interface to be switched out in the <code class="language-plaintext highlighter-rouge">getHttpResponse</code> method.</p>
+
+<p>Both high level and low level classes are dependent on an abstraction in this example. <code class="language-plaintext highlighter-rouge">Router</code> is the high level class which is dependent on only the abstraction, not the specific implementation details of the lower level classes.</p>
+
+<p>By having our <code class="language-plaintext highlighter-rouge">Router</code> class depend on an abstraction rather than specific implementation details the function <code class="language-plaintext highlighter-rouge">getHttpResponse</code> is reusable.</p>
+
+:ET

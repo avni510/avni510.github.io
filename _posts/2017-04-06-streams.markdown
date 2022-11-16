@@ -1,0 +1,61 @@
+--- 
+layout: post
+title:  Streams
+subtitle : How they work 
+tags: [Sample Post, Welcome to the Grape Theme!]
+author: Avni Kothari 
+comments : False
+---
+Java defines input and output in terms of streams. An input stream is a class that reads data and an output stream is a class that writes data. Streams are used for many different purposes. For example, to read data from a file you can use `java.io.FileInputStream`. In terms of networking, streams can be used to send data (output stream) or receive data (input stream). There are two main abstract classes that are used in Java the first is called an OutputStream which has a `write()` method and the second is an InputStream which has a `read()` method. All output and input streams implement these interfaces, meaning they contain the same behavior. 
+ 
+The InputStream and OutputStream read and write bytes respectively. Generally, one byte at a time isn't sent over the network because it's a costly operation. Instead, a group of bytes is sent over. When reading and writing data it is usually stored in a buffer. Bytes are accumulated in memory and are sent over to their destination when a certain amount of bytes have been accumulated or a certain amount of time has passed. This can cause frustrations because if you're a client and sent a request to a server, the server may have processed that request but if the buffer is not full no data is received by the client. The flush method can be used to avoid this. It can be used when you're done writing out data. It forces the buffered stream to send its data. 
+
+Since InputStream and OutputStream operate on a bytes level there are streams that allow you to translate bytes into a different format ex: ASCII values. These are called filter streams. For example, InputStreamReader reads bytes and converts them into characters. It is a wrapper around an InputStream. And the BufferedReader class optimizes the data sent through this stream. 
+
+Here's a simple Java program that returns "hello world" to a GET request to "/"
+
+I've commented each line to clarify the purpose of each line. This program also prints to the console the specifics of each HTTP request to the server. 
+
+```java
+import java.net.*;
+import java.io.*;
+
+public class HTTPServer {
+
+  public static void main(String args[]) throws Exception {
+    ServerSocket serverSocket = new ServerSocket(4444);
+    System.out.println("Listening for connection on port 4444");
+    while(true) {
+      try (
+          // returns a new socket that is connected to the client
+          Socket clientSocket = serverSocket.accept();
+          // creates the server's output stream has a write method which reads in bytes
+          OutputStream outputStream = clientSocket.getOutputStream();
+          // creates the server's input stream has a read method which reads in bytes
+          InputStream inputStream = clientSocket.getInputStream()
+
+      ) {
+        // InputStreamReader - converts bytes to character using a default character set implemented in InputStreamReader
+        // BufferedReader - stores data written to the buffer until the stream is full or flushed
+        BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
+
+        // loops through all the received data and prints it to the console
+        String line = in.readLine();
+        while (!line.isEmpty()) {
+          System.out.println(line);
+          line = in.readLine();
+        }
+
+        // string which contains the message to send to client
+        String httpResponse = "HTTP/1.1 200 OK\r\n\r\n" + "hello world";
+        // writes out message in bytes
+        outputStream.write(httpResponse.getBytes("UTF-8"));
+      } catch (IOException ex) {
+        System.err.println(ex.getMessage());
+      }
+    }
+  }
+}
+```
+
+

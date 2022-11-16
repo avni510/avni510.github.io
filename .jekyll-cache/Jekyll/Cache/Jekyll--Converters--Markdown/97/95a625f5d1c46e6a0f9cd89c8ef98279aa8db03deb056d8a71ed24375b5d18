@@ -1,0 +1,7 @@
+I"i<p>The next step of the redux journey was to build out <a href="https://react-redux.js.org/">react-redux</a>. Feel free to have a more detailed
+look at my code <a href="https://github.com/avni510/react-website">here</a>. React Redux allows us to
+inject the state into our components. I also decided to inject in commands which are in charge of dispatching actions
+and making an API call. Dispatching actions will update our store. I’ll explain this further in another blogpost, but right now we
+want to inject in the state and a container that contains commands into our components. Inject in these values into props allows us to have a greater chance
+of creating a stateless component. In this example there are the types for <code class="language-plaintext highlighter-rouge">State</code> and <code class="language-plaintext highlighter-rouge">AppContainer</code>.</p>
+:ET

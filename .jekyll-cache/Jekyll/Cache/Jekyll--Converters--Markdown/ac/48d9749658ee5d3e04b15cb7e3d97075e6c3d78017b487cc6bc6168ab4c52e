@@ -1,0 +1,60 @@
+I"È<p>There are a few ways to denote a function in Clojure. The most common way is something like this</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">merge-vector</span><span class="w"> </span><span class="p">[</span><span class="n">v1</span><span class="w"> </span><span class="n">v2</span><span class="p">]</span><span class="w"> 
+  </span><span class="p">(</span><span class="nb">into</span><span class="w"> </span><span class="n">v1</span><span class="w"> </span><span class="n">v2</span><span class="p">))</span><span class="w">
+</span></code></pre></div></div>
+
+<p>This is a function that takes two vectors and returns a new vector that is the combination of the elements in both these vectors. For example,</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="nf">merge-vector</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="p">[</span><span class="mi">3</span><span class="w"> </span><span class="mi">4</span><span class="p">])</span><span class="w">
+</span><span class="c1">; [1 2 3 4]</span><span class="w">
+</span></code></pre></div></div>
+
+<p>This is actually short hand for this</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">merge-vector</span><span class="w"> 
+  </span><span class="p">(</span><span class="k">fn</span><span class="p">[</span><span class="n">v1</span><span class="w"> </span><span class="n">v2</span><span class="p">]</span><span class="w"> </span><span class="p">(</span><span class="nb">into</span><span class="w"> </span><span class="n">v1</span><span class="w"> </span><span class="n">v2</span><span class="p">)))</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Which can then be invoked in the same way as above</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">merge-vector</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="p">[</span><span class="mi">3</span><span class="w"> </span><span class="mi">4</span><span class="p">])</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Anonymous Functions are a way to denote a function. The general notation of <code class="language-plaintext highlighter-rouge">(fn [params*] body)</code> can also be written <code class="language-plaintext highlighter-rouge">#(...)</code> which is called literal notation. So we can rewrite the above function like this</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="o">#</span><span class="p">(</span><span class="nb">into</span><span class="w"> </span><span class="n">%1</span><span class="w"> </span><span class="n">%2</span><span class="p">)</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="p">[</span><span class="mi">3</span><span class="w"> </span><span class="mi">4</span><span class="p">])</span><span class="w">
+</span><span class="c1">; [1 2 3 4]</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Where <code class="language-plaintext highlighter-rouge">%1 %2</code> denotes the that there are two arguments. When only argument is passed in it is convention to use <code class="language-plaintext highlighter-rouge">%</code> instead of <code class="language-plaintext highlighter-rouge">%1</code>.</p>
+
+<p>Anonymous Functions can be useful to use in higher order functions like <code class="language-plaintext highlighter-rouge">map</code>, <code class="language-plaintext highlighter-rouge">reduce</code>, <code class="language-plaintext highlighter-rouge">filter</code></p>
+
+<p>Lets say we wanted to find the remainder of all elements in a vector when the elements are divided by 3. It can be concisely written with an anonymous function.</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="o">#</span><span class="p">(</span><span class="nf">mod</span><span class="w"> </span><span class="n">%</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="p">[</span><span class="mi">6</span><span class="w"> </span><span class="mi">7</span><span class="w"> </span><span class="mi">8</span><span class="p">])</span><span class="w">
+</span><span class="c1">; (0 1 2)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Hereâ€™s another example with <code class="language-plaintext highlighter-rouge">filter</code></p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="nb">filter</span><span class="w"> </span><span class="o">#</span><span class="p">(</span><span class="nb">zero?</span><span class="w"> </span><span class="p">(</span><span class="nf">mod</span><span class="w"> </span><span class="mi">15</span><span class="w"> </span><span class="n">%</span><span class="p">))</span><span class="w"> </span><span class="p">(</span><span class="nb">range</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="mi">15</span><span class="w"> </span><span class="mi">2</span><span class="p">))</span><span class="w">
+</span><span class="c1">; (3 5)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>If we take this by steps:</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">; returns numbers 3 to 15 (exclusive) by 2</span><span class="w">
+</span><span class="n">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="nb">range</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="mi">15</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w">
+</span><span class="c1">; (3 5 7 9 11 13)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">; finds the numbers that are factors of 15 and returns a lazy sequence of those factors</span><span class="w">
+</span><span class="n">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="nb">filter</span><span class="w"> </span><span class="o">#</span><span class="p">(</span><span class="nb">zero?</span><span class="w"> </span><span class="p">(</span><span class="nf">mod</span><span class="w"> </span><span class="mi">15</span><span class="w"> </span><span class="n">%</span><span class="p">))</span><span class="w"> </span><span class="p">(</span><span class="nf">3</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="mi">7</span><span class="w"> </span><span class="mi">9</span><span class="w"> </span><span class="mi">11</span><span class="w"> </span><span class="mi">13</span><span class="p">))</span><span class="w">
+</span><span class="c1">; (3 5)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Both literal notation and the long hand way of <code class="language-plaintext highlighter-rouge">(fn [params*] body)</code> to denote an anonymous function are frequently used.</p>
+
+:ET

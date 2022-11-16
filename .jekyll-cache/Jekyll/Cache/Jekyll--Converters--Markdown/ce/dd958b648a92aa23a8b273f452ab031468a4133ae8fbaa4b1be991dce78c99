@@ -1,0 +1,101 @@
+I"�<p>This post will cover the differences between immutability and mutability in Ruby.</p>
+
+<h4 id="variable-references">Variable References</h4>
+
+<p>An object has state which is often referred to as a value. When a variable is assigned to an object it has a reference to that object. Ex:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="o">&gt;&gt;</span> <span class="n">a</span> <span class="o">=</span> <span class="s2">"hello world"</span>
+<span class="o">=&gt;</span> <span class="s2">"hello world"</span>
+
+<span class="o">&gt;&gt;</span> <span class="n">a</span><span class="p">.</span><span class="nf">object_id</span>
+<span class="o">=&gt;</span> <span class="mi">70113614077220</span></code></pre></figure>
+
+<p>This means the variable <code class="language-plaintext highlighter-rouge">a</code> has a reference to the String object with the value “hello world”. <code class="language-plaintext highlighter-rouge">#object_id</code> is a method that Ruby provides and it tells us what the id of the object it is refering to. In this example <code class="language-plaintext highlighter-rouge">a</code> is pointing to the string object with the id 70113614077220.</p>
+
+<p><img src="/assets/Reference.png" alt="reference_diagram" /></p>
+
+<p>There are two types of objects - those that are immutable and those that are mutable</p>
+
+<h4 id="immutable-objects">Immutable Objects</h4>
+
+<p>These are objects whose state cannot be changed. In Ruby, the Integers class is immutable. Here’s an example</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="o">&gt;&gt;</span> <span class="n">number</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="o">=&gt;</span> <span class="mi">5</span>
+
+<span class="o">&gt;&gt;</span> <span class="n">number</span><span class="p">.</span><span class="nf">object_id</span>
+<span class="o">=&gt;</span> <span class="mi">11</span>
+
+<span class="o">&gt;&gt;</span> <span class="n">number</span> <span class="o">=</span> <span class="mi">12</span>
+<span class="o">=&gt;</span> <span class="mi">12</span>
+
+<span class="o">&gt;&gt;</span> <span class="n">number</span><span class="p">.</span><span class="nf">object_id</span>
+<span class="o">=&gt;</span> <span class="mi">25</span></code></pre></figure>
+
+<p>When we assign <code class="language-plaintext highlighter-rouge">number</code> to the value 5 the object id is 11. But when we change <code class="language-plaintext highlighter-rouge">number</code> to the value of 12 the object id is 25. So number is referring to a different object after being reassigned.</p>
+
+<p>Internally it looks like this</p>
+
+<p><img src="/assets/Reference_Integer.png" alt="reference_integer_diagram" /></p>
+
+<p>Even something like this will cause <code class="language-plaintext highlighter-rouge">number</code> to have a different reference point</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="o">&gt;&gt;</span> <span class="n">number</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="o">=&gt;</span> <span class="mi">5</span>
+
+<span class="o">&gt;&gt;</span> <span class="n">number</span><span class="p">.</span><span class="nf">object_id</span>
+<span class="o">=&gt;</span> <span class="mi">11</span>
+
+<span class="o">&gt;&gt;</span> <span class="n">number</span> <span class="o">+=</span> <span class="mi">2</span>
+<span class="o">=&gt;</span> <span class="mi">7</span>
+
+<span class="o">&gt;&gt;</span> <span class="n">number</span><span class="p">.</span><span class="nf">object_id</span>
+<span class="o">=&gt;</span> <span class="mi">15</span></code></pre></figure>
+
+<p>Even when we are incrementing <code class="language-plaintext highlighter-rouge">number</code> it actually references a new integer (7) which is a different instance of the Integer class.</p>
+
+<h4 id="mutable-objects">Mutable Objects</h4>
+
+<p>These are objects whose state can be changed. In Ruby, Strings, Hashes, and Arrays are a few of the classes that are mutable. Here’s an example</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># create an empty hash</span>
+<span class="o">&gt;&gt;</span> <span class="n">a</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="o">=&gt;</span> <span class="p">{}</span>
+<span class="o">&gt;&gt;</span> <span class="n">a</span><span class="p">.</span><span class="nf">object_id</span>
+<span class="o">=&gt;</span> <span class="mi">70113613908440</span>
+<span class="c1"># add a value to the hash</span>
+<span class="o">&gt;&gt;</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"foo"</span>
+<span class="o">=&gt;</span> <span class="s2">"foo"</span>
+<span class="o">&gt;&gt;</span> <span class="n">a</span>
+<span class="o">=&gt;</span> <span class="p">{</span><span class="mi">1</span><span class="o">=&gt;</span><span class="s2">"foo"</span><span class="p">}</span>
+<span class="c1"># the variable 'a' still has the same object id</span>
+<span class="o">&gt;&gt;</span> <span class="n">a</span><span class="p">.</span><span class="nf">object_id</span>
+<span class="o">=&gt;</span> <span class="mi">70113613908440</span>
+<span class="c1"># the key of '1' has a different object id than a </span>
+<span class="o">&gt;&gt;</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="nf">object_id</span>
+<span class="o">=&gt;</span> <span class="mi">70113613877980</span></code></pre></figure>
+
+<p>Here’s what’s happening internally 
+<img src="/assets/Mutable.png" alt="mutable_diagram" /></p>
+
+<p><code class="language-plaintext highlighter-rouge">a</code> has a reference to an instance of Hash and each key of the hash is pointing to an instance of String with the corresponding hash value.</p>
+
+<p>Because a Hash is mutable if we add another key, value pair to the hash, <code class="language-plaintext highlighter-rouge">a</code> will have the same reference point (the same object id).</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># add a key value pair to the hash</span>
+<span class="o">&gt;&gt;</span> <span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"bar"</span>
+<span class="o">=&gt;</span> <span class="s2">"bar"</span>
+<span class="o">&gt;&gt;</span> <span class="n">a</span>
+<span class="o">=&gt;</span> <span class="p">{</span><span class="mi">1</span><span class="o">=&gt;</span><span class="s2">"foo"</span><span class="p">,</span> <span class="mi">2</span><span class="o">=&gt;</span><span class="s2">"bar"</span><span class="p">}</span>
+<span class="c1"># a has the same object id </span>
+<span class="o">&gt;&gt;</span> <span class="n">a</span><span class="p">.</span><span class="nf">object_id</span>
+<span class="o">=&gt;</span> <span class="mi">70113613908440</span>
+<span class="c1"># the new key of '2' has a new object id</span>
+<span class="o">&gt;&gt;</span> <span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">].</span><span class="nf">object_id</span>
+<span class="o">=&gt;</span> <span class="mi">70113613831220</span></code></pre></figure>
+
+<p>Again here’s what’s happening internally</p>
+
+<p><img src="/assets/Mutable2.png" alt="mutable2_diagram" /></p>
+
+:ET

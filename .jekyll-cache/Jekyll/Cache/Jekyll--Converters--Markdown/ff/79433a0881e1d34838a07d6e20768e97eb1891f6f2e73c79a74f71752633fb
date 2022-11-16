@@ -1,0 +1,142 @@
+I"�M<p>This week I spent most of my time implementing Minimax in Clojure. Upon first approaching the problem I thought my implementation would be similar to my first implementation of minimax in Ruby. But to my surprise the Clojure implementation came out quite different.</p>
+
+<p>The goal of minimax is to have the computer never lose in a game of tic tac toe. So given a board find the optimal move. Here’s a bit of pseudocode for the algorithm.</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">; for each open spot on the board fill that open spot and determine if the game is over</span><span class="w">
+</span><span class="c1">; if the game is over then determine if the computer or the human won or if the game was tied</span><span class="w">
+  </span><span class="c1">; if the game is won by the computer return +1 as the score,  </span><span class="w">
+  </span><span class="c1">; if won by the human return -1 for the score, </span><span class="w">
+  </span><span class="c1">; and if tied return 0</span><span class="w">
+</span><span class="c1">; if the game is not over continue to keep playing the game</span><span class="w">
+</span><span class="c1">; if it the computer's turn maximize the scores and if it is the human's turn minimize the scores</span><span class="w">
+</span></code></pre></div></div>
+
+<p>This algorithm generates a tree structure, so looking at it from a holistic perspective at each level in the tree we are find the optimal move (whether that’s the min or max of the scores).</p>
+
+<p>Looking at it from this perspective I first started with just generating the next level of the tree. So taking any given board and generating a new sequence of boards with each corresponding open space filled in.</p>
+
+<p>Visually given the computer is marker X and the human is marker O and the open spaces are 5 and 8. How can I generate the next level given a board.</p>
+
+<p><img src="/assets/minimax-next-boards.png" alt="minimax-next-boards" /></p>
+
+<p>Here’s how I solved this problem</p>
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">defn-</span><span class="w"> </span><span class="n">open-spaces</span><span class="w"> </span><span class="p">[</span><span class="n">board</span><span class="p">]</span><span class="w">
+   </span><span class="p">(</span><span class="nb">filter</span><span class="w"> </span><span class="n">number?</span><span class="w"> </span><span class="n">board</span><span class="p">))</span><span class="w">
+
+</span><span class="p">(</span><span class="k">defn-</span><span class="w"> </span><span class="n">generate-boards</span><span class="w"> </span><span class="p">[</span><span class="n">current-player-marker</span><span class="w"> </span><span class="n">board</span><span class="p">]</span><span class="w">
+  </span><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="o">#</span><span class="p">(</span><span class="nf">board/fill-board</span><span class="w"> </span><span class="n">%</span><span class="w"> </span><span class="n">board</span><span class="w"> </span><span class="n">current-player-marker</span><span class="p">)</span><span class="w">
+       </span><span class="p">(</span><span class="nf">open-spaces</span><span class="w"> </span><span class="n">board</span><span class="p">)))</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Given a board I generate a sequences of boards and each value in the sequence is a board with a corresponding open space filled in with the given marker. The next level of the tree in the diagram above is stored in a sequence.</p>
+
+<p>The next step in the algorithm is that for each level in the tree generate the optimal move.</p>
+
+<p>There are two scenarios that could occur in this next step:</p>
+<ol>
+  <li>if the game is over return the score and find the optimal score</li>
+  <li>if the game is not over generate the next level in the tree and find the optimal score</li>
+</ol>
+
+<p>This is essentially the heart of the algorithm. Here’s a diagram of what I’m trying to solve.</p>
+
+<p><img src="/assets/minimax-scores.png" alt="minimax-scores" /></p>
+
+<p>Here’s the way I coded in this out in steps</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">defn-</span><span class="w"> </span><span class="n">min-or-max</span><span class="w"> </span><span class="p">[</span><span class="n">depth</span><span class="p">]</span><span class="w">
+  </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">zero?</span><span class="w"> </span><span class="p">(</span><span class="nf">mod</span><span class="w"> </span><span class="n">depth</span><span class="w"> </span><span class="mi">2</span><span class="p">))</span><span class="w">
+    </span><span class="nb">min</span><span class="w">
+    </span><span class="nb">max</span><span class="p">))</span><span class="w">
+
+</span><span class="p">(</span><span class="k">defn-</span><span class="w"> </span><span class="n">optimal-score</span><span class="w">
+  </span><span class="p">[</span><span class="n">sequence-boards</span><span class="w"> </span><span class="n">computer-marker</span><span class="w"> </span><span class="n">opponent-marker</span><span class="w"> </span><span class="n">depth</span><span class="p">]</span><span class="w">
+  </span><span class="p">(</span><span class="nf">-&gt;&gt;</span><span class="w">
+      </span><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="o">#</span><span class="p">(</span><span class="nf">retrieve-score</span><span class="w"> </span><span class="n">%</span><span class="w"> </span><span class="n">computer-marker</span><span class="w"> </span><span class="n">opponent-marker</span><span class="w"> </span><span class="n">depth</span><span class="p">)</span><span class="w">
+           </span><span class="n">sequence-boards</span><span class="p">)</span><span class="w">
+      </span><span class="p">(</span><span class="nb">apply</span><span class="w"> </span><span class="p">(</span><span class="nf">min-or-max</span><span class="w"> </span><span class="n">depth</span><span class="p">))))</span><span class="w">
+</span></code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">optimal-score</code> takes in a sequence of boards (the next level in the tree) both markers and the depth of the tree (0 if it’s at the top most level, 1 if it’s on the first level, etc.)</p>
+
+<p>The first part of the function with <code class="language-plaintext highlighter-rouge">map</code> returns a sequence of scores something like <code class="language-plaintext highlighter-rouge">(-1 1 0)</code>. It works by calling a function called <code class="language-plaintext highlighter-rouge">retrieve-score</code> on each board which will then fetch the score for that specific board. So now that I have a sequence of scores I apply a function called <code class="language-plaintext highlighter-rouge">min-or-max</code> which will calculate the minimum of the sequence if the depth is even (the human’s marker) or the maximum if the depth is odd (the computer’s marker).</p>
+
+<p>Ok so how does <code class="language-plaintext highlighter-rouge">retreive-score</code> work?</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">defn-</span><span class="w"> </span><span class="n">determine-player-marker</span><span class="w"> </span><span class="p">[</span><span class="n">depth</span><span class="w"> </span><span class="n">computer-marker</span><span class="w"> </span><span class="n">opponent-marker</span><span class="p">]</span><span class="w">
+  </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">zero?</span><span class="w"> </span><span class="p">(</span><span class="nf">mod</span><span class="w"> </span><span class="n">depth</span><span class="w"> </span><span class="mi">2</span><span class="p">))</span><span class="w">
+   </span><span class="n">computer-marker</span><span class="w">
+   </span><span class="n">opponent-marker</span><span class="p">))</span><span class="w">
+
+</span><span class="p">(</span><span class="k">defn-</span><span class="w"> </span><span class="n">calculate-score</span><span class="w"> </span><span class="p">[</span><span class="n">board</span><span class="w"> </span><span class="n">computer-marker</span><span class="w"> </span><span class="n">opponent-marker</span><span class="w"> </span><span class="n">depth</span><span class="p">]</span><span class="w">
+  </span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[</span><span class="n">winning-marker</span><span class="w"> </span><span class="p">(</span><span class="nf">game-evaluation/winning-marker</span><span class="w"> </span><span class="n">board</span><span class="p">)]</span><span class="w">
+    </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="n">winning-marker</span><span class="w">
+      </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">=</span><span class="w"> </span><span class="n">winning-marker</span><span class="w"> </span><span class="n">computer-marker</span><span class="p">)</span><span class="w">
+        </span><span class="mi">1</span><span class="w">
+        </span><span class="mi">-1</span><span class="p">)</span><span class="w">
+    </span><span class="mi">0</span><span class="p">)))</span><span class="w">
+
+</span><span class="p">(</span><span class="k">defn-</span><span class="w"> </span><span class="n">retrieve-score</span><span class="w"> </span><span class="p">[</span><span class="n">board</span><span class="w"> </span><span class="n">computer-marker</span><span class="w"> </span><span class="n">opponent-marker</span><span class="w"> </span><span class="n">depth</span><span class="p">]</span><span class="w">
+  </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nf">game-evaluation/game-over?</span><span class="w"> </span><span class="n">board</span><span class="p">)</span><span class="w">
+    </span><span class="p">(</span><span class="nf">calculate-score</span><span class="w"> </span><span class="n">board</span><span class="w"> </span><span class="n">computer-marker</span><span class="w"> </span><span class="n">opponent-marker</span><span class="w"> </span><span class="n">depth</span><span class="p">)</span><span class="w">
+    </span><span class="p">(</span><span class="nb">-&gt;</span><span class="w">
+       </span><span class="p">(</span><span class="nf">determine-player-marker</span><span class="w"> </span><span class="n">depth</span><span class="w"> </span><span class="n">computer-marker</span><span class="w"> </span><span class="n">opponent-marker</span><span class="p">)</span><span class="w">
+       </span><span class="p">(</span><span class="nf">generate-boards</span><span class="w"> </span><span class="n">board</span><span class="p">)</span><span class="w">
+       </span><span class="p">(</span><span class="nf">optimal-score</span><span class="w"> </span><span class="n">computer-marker</span><span class="w"> </span><span class="n">opponent-marker</span><span class="w"> </span><span class="p">(</span><span class="nb">inc</span><span class="w"> </span><span class="n">depth</span><span class="p">)))))</span><span class="w">
+</span></code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">retrieve-score</code> is just a conditional. It says if the game is over determine the score of that board (1, -1, or 0) if it’s not over figure out which player’s turn it is, generate a new set of boards with each corresponding open space filled in (this is a sequence) and determine the optimal score for that sequence of boards.</p>
+
+<p>Now we have the bulk of the functionality!</p>
+
+<p>The only thing is that ultimately  we want a move returned not a score. But based on the functionality defined if we ran our functions we would just receive the best score back, and not the move associated with it.</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="nf">optimal-score</span><span class="w"> </span><span class="p">(</span><span class="nf">generate-boards</span><span class="w"> </span><span class="no">:x</span><span class="w"> </span><span class="p">[</span><span class="no">:o</span><span class="w"> </span><span class="no">:o</span><span class="w"> </span><span class="no">:x</span><span class="w"> </span><span class="no">:x</span><span class="w"> </span><span class="no">:x</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="no">:o</span><span class="w"> </span><span class="no">:o</span><span class="w"> </span><span class="mi">8</span><span class="p">])</span><span class="w"> </span><span class="no">:x</span><span class="w"> </span><span class="no">:o</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w">
+</span><span class="c1">; 1</span><span class="w">
+</span></code></pre></div></div>
+
+<p>So the next problem is how do I generate the best move. I approached this by thinking that at a depth of 1 that is the only time when we actually care about the move. We don’t necessarily need to know the move on the levels after that.</p>
+
+<p>In a sense we can think of each node of depth 1 generating its own tree and returning a score. In the visual example above the open space of 5 will generate its own tree and return a score and the open space of 8 will generate its own tree and return a score.</p>
+
+<p>So what if I had a map with the keys as the move (on depth 1) and the values as the score of each move on depth 1.</p>
+
+<p>I came up with this function to express this</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">scores-map</span><span class="w"> </span><span class="p">[</span><span class="n">board</span><span class="w"> </span><span class="n">computer-marker</span><span class="w"> </span><span class="n">opponent-marker</span><span class="p">]</span><span class="w">
+ </span><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="o">#</span><span class="p">(</span><span class="nb">hash-map</span><span class="w"> </span><span class="n">%</span><span class="w">
+         </span><span class="p">(</span><span class="nf">optimal-score</span><span class="w">
+           </span><span class="p">(</span><span class="nf">lazy-seq</span><span class="w"> </span><span class="p">(</span><span class="nb">vector</span><span class="w"> </span><span class="p">(</span><span class="nf">board/fill-board</span><span class="w"> </span><span class="n">%</span><span class="w"> </span><span class="n">board</span><span class="w"> </span><span class="n">computer-marker</span><span class="p">)))</span><span class="w">
+           </span><span class="n">computer-marker</span><span class="w">
+           </span><span class="n">opponent-marker</span><span class="w">
+           </span><span class="mi">1</span><span class="p">))</span><span class="w">
+         </span><span class="p">(</span><span class="nf">open-spaces</span><span class="w"> </span><span class="n">board</span><span class="p">)))</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Given a board and both markers create a hash map with the key as the move and the value as the score of that corresponding subtree. The value is populated by saying for each open space on the board generate a sequence with a new board filled in with the corresponding open space. So in the example above <code class="language-plaintext highlighter-rouge">([:o :o :x :x :x :x :o :o 8])</code> and <code class="language-plaintext highlighter-rouge">([:o :o :x :x :x 5 :o :o :x])</code> then on each sequence find the optimal score.</p>
+
+<p>This function returns this</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="nf">scores-map</span><span class="w"> </span><span class="p">[</span><span class="no">:o</span><span class="w"> </span><span class="no">:o</span><span class="w"> </span><span class="no">:x</span><span class="w"> </span><span class="no">:x</span><span class="w"> </span><span class="no">:x</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="no">:o</span><span class="w"> </span><span class="no">:o</span><span class="w"> </span><span class="mi">8</span><span class="p">]</span><span class="w"> </span><span class="no">:x</span><span class="w"> </span><span class="no">:o</span><span class="p">)</span><span class="w">
+</span><span class="c1">; ({5 1} {8 0})</span><span class="w">
+</span></code></pre></div></div>
+
+<p>So if we go down path 5 we are most likely to win.</p>
+
+<p>This data structure can be manipulated with this function to return to the best move</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">best-move</span><span class="w"> </span><span class="p">[</span><span class="n">move-score-map</span><span class="p">]</span><span class="w">
+  </span><span class="p">(</span><span class="nf">-&gt;&gt;</span><span class="w"> </span><span class="n">move-score-map</span><span class="w">
+       </span><span class="p">(</span><span class="nb">apply</span><span class="w"> </span><span class="nb">merge</span><span class="p">)</span><span class="w">
+       </span><span class="p">(</span><span class="nb">apply</span><span class="w"> </span><span class="nb">max-key</span><span class="w"> </span><span class="nb">val</span><span class="p">)</span><span class="w">
+       </span><span class="p">(</span><span class="nb">key</span><span class="p">)))</span><span class="w">
+</span></code></pre></div></div>
+
+<p>I can now get the best move for the given board like this</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="nf">best-move</span><span class="w"> </span><span class="p">(</span><span class="nf">scores-map</span><span class="w"> </span><span class="p">[</span><span class="no">:o</span><span class="w"> </span><span class="no">:o</span><span class="w"> </span><span class="no">:x</span><span class="w"> </span><span class="no">:x</span><span class="w"> </span><span class="no">:x</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="no">:o</span><span class="w"> </span><span class="no">:o</span><span class="w"> </span><span class="mi">8</span><span class="p">]</span><span class="w"> </span><span class="no">:x</span><span class="w"> </span><span class="no">:o</span><span class="p">))</span><span class="w">
+</span><span class="c1">; 5</span><span class="w">
+</span></code></pre></div></div>
+
+<p>This is just one way to solve the minimax problem. There a numerous ways, but I found this approach the easiest to work with.</p>
+:ET

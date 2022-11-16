@@ -1,0 +1,95 @@
+I"�<p>Recursion is often found in many built in functions within Clojure for example in <code class="language-plaintext highlighter-rouge">filter</code> and <code class="language-plaintext highlighter-rouge">map</code>. This blogpost will specifically cover linear and tree recursion.</p>
+
+<h4 id="linear-recursion"><strong>Linear Recursion</strong></h4>
+
+<p>Linear recursion for a vector works by processing the first element and working it’s way down the sequence. The size of the computation grows linearly with the size of the input so the big o notation is O(N)</p>
+
+<p>Here’s an example of a recursive function.</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">map-func</span><span class="w"> </span><span class="p">[</span><span class="n">f</span><span class="w"> </span><span class="n">seq1</span><span class="p">]</span><span class="w">
+  </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nf">empty?</span><span class="w"> </span><span class="n">seq1</span><span class="p">)</span><span class="w">
+    </span><span class="n">seq1</span><span class="w">
+    </span><span class="p">(</span><span class="nb">cons</span><span class="w"> </span><span class="p">(</span><span class="nf">f</span><span class="w"> </span><span class="p">(</span><span class="nb">first</span><span class="w"> </span><span class="n">seq1</span><span class="p">))</span><span class="w">
+      </span><span class="p">(</span><span class="nf">map-func</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="p">(</span><span class="nb">rest</span><span class="w"> </span><span class="n">seq1</span><span class="p">))</span><span class="w">
+    </span><span class="p">)</span><span class="w">
+  </span><span class="p">)</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Here’s the evaluation of the function.</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="nb">dec</span><span class="w"> </span><span class="p">[</span><span class="mi">6</span><span class="w"> </span><span class="mi">7</span><span class="w"> </span><span class="mi">3</span><span class="p">])</span><span class="w">
+</span><span class="c1">; (cons (dec 6) (map-func dec [7 3]))</span><span class="w">
+</span><span class="c1">;                   ↓</span><span class="w">
+</span><span class="c1">;               (cons (dec 7) (map-func dec [3]))</span><span class="w">
+</span><span class="c1">;                                   ↓</span><span class="w">
+</span><span class="c1">;                             (cons (dec 3) (map-func dec ()))</span><span class="w">
+</span><span class="c1">;                                                  ↓</span><span class="w">
+</span><span class="c1">;                                                  ()</span><span class="w">
+</span></code></pre></div></div>
+
+<p>The final call occurs because the base case is hit. So the sequence returned is this</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">; (cons (dec 6) (cons (dec 7) (cons (dec 3) ())))</span><span class="w">
+</span><span class="c1">; =&gt; '(5 6 2)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>As you can see there were 3 recursive calls and 3 elements in the vector therefore the big o notation is O(N) for this recursive function.</p>
+
+<h4 id="tree-recursion"><strong>Tree Recursion</strong></h4>
+
+<p>Another type of recursion is tree recursion. An example of tree recursion is the Fibonacci Sequence. This sequences adds together the previous two natural numbers. Here are the first 5 Fibonacci numbers.</p>
+
+<p>f0 = 0</p>
+
+<p>f1 = 1</p>
+
+<p>f2 = 1</p>
+
+<p>f3 = 2</p>
+
+<p>f4 = 3</p>
+
+<p>f5 = 5</p>
+
+<p>…</p>
+
+<p>So to find the next element of the fibonnaci sequence we can do this:</p>
+
+<p>f2 = f1 + f0</p>
+
+<p>f3 = f2 + f1</p>
+
+<p>f4 = f3 + f2</p>
+
+<p>f5 = f4 + f3</p>
+
+<p>…</p>
+
+<p>In clojure, it can be written like this:</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">fib</span><span class="w"> </span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="w">                                                                              
+   </span><span class="p">(</span><span class="k">cond</span><span class="w">                                                                                    
+     </span><span class="p">(</span><span class="nb">=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w">                                                                                
+       </span><span class="mi">0</span><span class="w">                                                                                    
+     </span><span class="p">(</span><span class="nb">=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w">                                                                                
+       </span><span class="mi">1</span><span class="w">                                                                                    
+     </span><span class="no">:else</span><span class="w">                                                                                  
+       </span><span class="p">(</span><span class="nb">+</span><span class="w"> </span><span class="p">(</span><span class="nf">fib</span><span class="w"> </span><span class="p">(</span><span class="nb">dec</span><span class="w"> </span><span class="n">n</span><span class="p">))</span><span class="w"> </span><span class="p">(</span><span class="nf">fib</span><span class="w"> </span><span class="p">(</span><span class="nb">-</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="mi">2</span><span class="p">)))</span><span class="w">                                                      
+   </span><span class="p">)</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+<p>If we wanted to find the 4th Fibonacci number</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">fib</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="w">
+</span><span class="c1">; =&gt; 3</span><span class="w">
+</span></code></pre></div></div>
+<p>The evaluation would like something like this</p>
+
+<p><img src="/assets/fib_tree.png" alt="fib_tree" /></p>
+
+<p>This type of recursion spawns off  multiple children until either base case is reached. The values of the nodes are then totaled up and passed up the tree and the final result of 3 is returned.</p>
+
+<p><img src="/assets/fib_tree_after_eval.png" alt="fib_tree_after_eval" /></p>
+
+:ET

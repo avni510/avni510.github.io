@@ -1,0 +1,53 @@
+I"s<p>Hash functions can be particularly useful for searching through a database with a large amount of data. For example, lets say you have a very large table of name and phone numbers like this</p>
+
+<p><img src="/assets/img/Table1.png" alt="Table1" /></p>
+
+<p>…</p>
+
+<p>Given a name if you wanted to find the corresponding phone number you would have to look through each name in the column of the database to see if it matches the one you’re looking for. This query is O(N) because you have to look through each name in the column.</p>
+
+<p>There is a faster way using hash functions. What if we could map the names of the database column to an index in an array. And the contents of the array at that index is the corresponding phone number. Then accessing an index from an array is constant O(1).</p>
+
+<p>Lets say our array has a length of 13 (meaning the indicies would run from 0 to 12). Here’s one way it could be done.</p>
+
+<p>Step 1:</p>
+
+<p>We can find the sum of ASCII values of each character in the string.</p>
+
+<p><img src="/assets/img/Table2.png" alt="Table2" /></p>
+
+<p>Since we want to map the name to an index in the array we can mod the ASCII Value sum by the length of the array, in our case 13.</p>
+
+<p>Giving us this new table</p>
+
+<p><img src="/assets/img/Table3.png" alt="Table3" /></p>
+
+<p>So our hash function is defined as h(k) = k mod 13 where k is equal to the ASCII value sum.</p>
+
+<p>This data structure is a called a hash table. The keys are indexes and the values are stored in the corresponding index. Note that is different from an array by the fact that an array is populated consecutively. Ex: if had an array with <code class="language-plaintext highlighter-rouge">[401-982-4301, 312-900-8765, 213-530-4563]</code> The corresponding indexes would be <code class="language-plaintext highlighter-rouge">[0, 1, 2]</code>.</p>
+
+<p>So now we have populated our hash table. To find Baz’s phone number we no longer have to go through each row in the table. We can run Baz through our hash function which will output a value of 12 so we know that Baz’s phone number lives at index 12.</p>
+
+<p>But what if we now had a table that looked like this</p>
+
+<p><img src="/assets/img/Table4.png" alt="Table4" /></p>
+
+<p><img src="/assets/img/Table5.png" alt="Table5" /></p>
+
+<p>Now both Foo and Harris have the same hash value. So when we’re populating our hash table we get something called a collision - meaning two keys have the same hash value. There are a few clever ways to get around this</p>
+
+<h4 id="linked-list">Linked List</h4>
+
+<p>We could create a linked list of values</p>
+
+<p>This is what our hash table would look like</p>
+
+<p><img src="/assets/img/Table6.png" alt="Table6" /></p>
+
+<p>And when we run our query we would get back a list of all the values (which would still be faster than running a regular serach query).</p>
+
+<h4 id="another-hash-function">Another Hash Function</h4>
+<p>When we’re populating the hash table and we realize that 12 already has a value stored into we can run “Harris” through another hash function and keep doing that until there is an open index. The only problem with this method is that lookups can become complex.</p>
+
+<p>There are definitely benefits to using hash functions for database lookups, but they are not always useful. It does take time and space to populate a hash table. The most benefit will come when you’re doing lookups frequently.</p>
+:ET

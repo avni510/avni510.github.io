@@ -1,0 +1,90 @@
+I"�<p>Liskov Substitution Principle is the “L” in the SOLID Principles. It states if you have a parent class and a child class, any instance of the child class should be able to replace any instance of the parent class without having unexpected behaviors.</p>
+
+<p>This is a classic example of a violation that Bob Martin uses in his book <em>Agile Software Development</em></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Rectangle</span>
+  <span class="k">def</span> <span class="nf">set_height</span><span class="p">(</span><span class="n">height</span><span class="p">)</span>
+    <span class="vi">@height</span> <span class="o">=</span> <span class="n">height</span> 
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">set_width</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
+    <span class="vi">@width</span> <span class="o">=</span> <span class="n">width</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">Square</span> <span class="o">&lt;</span> <span class="no">Rectangle</span>
+  <span class="k">def</span> <span class="nf">set_height</span><span class="p">(</span><span class="n">height</span><span class="p">)</span>
+    <span class="k">super</span><span class="p">(</span><span class="n">height</span><span class="p">)</span>
+    <span class="vi">@width</span> <span class="o">=</span> <span class="n">height</span>
+  <span class="k">end</span>
+  
+  <span class="k">def</span> <span class="nf">set_width</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
+    <span class="k">super</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
+    <span class="vi">@height</span> <span class="o">=</span> <span class="n">width</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>This is a violation because the Square class modifies both height and width when  <code class="language-plaintext highlighter-rouge">#set_height</code> or <code class="language-plaintext highlighter-rouge">#set_width</code> are called. Where as in the Rectangle class when <code class="language-plaintext highlighter-rouge">#set_height</code> or <code class="language-plaintext highlighter-rouge">#set_width</code> only one instance variable is being changed by each method. Any instance of <code class="language-plaintext highlighter-rouge">Square</code> cannot be replaced for any instance of <code class="language-plaintext highlighter-rouge">Rectangle</code> because modifying the other instance variable in the methods of the Square class can cause unintended consequences.</p>
+
+<p>This can be rewritten like this so it is not a violation</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Rectangle</span>
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="vi">@height</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="ss">:height</span><span class="p">]</span>
+    <span class="vi">@width</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="ss">:width</span><span class="p">]</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">Square</span>
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="vi">@height</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="ss">:height</span><span class="p">]</span> <span class="o">||</span> <span class="n">params</span><span class="p">[</span><span class="ss">:width</span><span class="p">]</span>
+    <span class="vi">@width</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="ss">:height</span><span class="p">]</span> <span class="o">||</span> <span class="n">params</span><span class="p">[</span><span class="ss">:width</span><span class="p">]</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>Below is another example of a violation.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Animal</span> 
+  <span class="k">def</span> <span class="nf">eat</span> 
+    <span class="nb">puts</span> <span class="s2">"I am eating"</span>
+  <span class="k">end</span>
+  
+  <span class="k">def</span> <span class="nf">walk</span>
+    <span class="nb">puts</span> <span class="s2">"I am walking"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">Dog</span> <span class="o">&lt;</span> <span class="no">Animal</span>
+  <span class="k">def</span> <span class="nf">walk</span>
+    <span class="nb">puts</span> <span class="p">[</span><span class="s2">"I"</span><span class="p">,</span> <span class="s2">"am"</span><span class="p">,</span> <span class="s2">"walking"</span><span class="p">]</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>This is a violation because any instance of Dog cannot replace any instance of Animal and be expected to behave the same way. If we create an instance of Animal and an instance of Dog and call <code class="language-plaintext highlighter-rouge">#walk</code> on both of the instances we will receive back two different data structures - a string and an array respectively.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">animal1</span> <span class="o">=</span> <span class="no">Animal</span><span class="p">.</span><span class="nf">new</span>
+<span class="nb">print</span> <span class="n">animal1</span><span class="p">.</span><span class="nf">walk</span>
+<span class="c1"># =&gt; "I am walking"</span>
+<span class="n">dog1</span> <span class="o">=</span> <span class="no">Dog</span><span class="p">.</span><span class="nf">new</span>
+<span class="nb">print</span> <span class="n">dog1</span><span class="p">.</span><span class="nf">walk</span>
+<span class="c1"># =&gt; "["I", "am", "walking"]</span></code></pre></figure>
+
+<p>Instead we need consistency. Both implementations of <code class="language-plaintext highlighter-rouge">#walk</code> need to return the same data structure.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Animal</span> 
+  <span class="k">def</span> <span class="nf">eat</span> 
+    <span class="nb">puts</span> <span class="s2">"I am eating"</span>
+  <span class="k">end</span>
+  
+  <span class="k">def</span> <span class="nf">walk</span>
+    <span class="nb">puts</span> <span class="s2">"I am walking"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">Dog</span> <span class="o">&lt;</span> <span class="no">Animal</span>
+  <span class="k">def</span> <span class="nf">walk</span>
+    <span class="nb">puts</span> <span class="s2">"I am walking fast"</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>Other violations include different method signatures or errors (the child class produces an error in a method that the parent class does not)</p>
+:ET

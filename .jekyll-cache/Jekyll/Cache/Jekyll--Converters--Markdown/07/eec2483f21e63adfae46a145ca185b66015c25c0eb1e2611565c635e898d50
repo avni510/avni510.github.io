@@ -1,0 +1,2 @@
+I"U<p>The <code class="language-plaintext highlighter-rouge">PREPARE</code> statement is a useful and widely used statement in SQL. The way it works is it essentially creates a template of the query you would like to run. Instead of the actual values being passed in, placeholders are passed in (similar to parameters). Here’s an example</p>
+:ET

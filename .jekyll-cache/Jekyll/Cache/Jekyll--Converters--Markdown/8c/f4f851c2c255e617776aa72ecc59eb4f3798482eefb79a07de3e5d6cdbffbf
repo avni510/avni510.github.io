@@ -1,0 +1,66 @@
+I"i<p>This blogpost will specifically cover cross joins and how they can lead to slow queries. Cross joins also known as a Cartesian Product joins all rows of each table together. The wikipedia page on a <a href="https://en.wikipedia.org/wiki/Cartesian_product">Cartesian Product</a> has a good visual of what that would be mean.</p>
+
+<p><img src="/assets/cartesian_product.png" alt="Cartesian_Product" /></p>
+
+<p>Lets say you had a table A that has rows <code class="language-plaintext highlighter-rouge">x, y, z</code> and another table B that has rows <code class="language-plaintext highlighter-rouge">1, 2, 3</code>. A cross join would mean row <code class="language-plaintext highlighter-rouge">x</code> from table A would join with rows <code class="language-plaintext highlighter-rouge">1, 2, and 3</code> from table B and row <code class="language-plaintext highlighter-rouge">y</code> from table A would join with rows <code class="language-plaintext highlighter-rouge">1, 2, 3</code> from table B, etc. The squares in the visual above can be thought of as the number of resulting rows.</p>
+
+<p>This causes the number of rows in your resulting table to be equal to the number of rows in Table A * number of rows in Table B. In the example above 3 X 3.</p>
+
+<p>If you are working on tables with a large number of rows this can cause your queries to slow down significantly because the result set is so large.</p>
+
+<p>Here is an example of when a cross join maybe be used in a small dataset</p>
+
+<p>Lets say we have a <code class="language-plaintext highlighter-rouge">LOGTIMES</code> table and <code class="language-plaintext highlighter-rouge">TIMECODES</code> table</p>
+
+<p><img src="/assets/LogTimesTable.png" alt="logtimes_table" /></p>
+
+<p><img src="/assets/TImecodesTable.png" alt="timecodes_table" /></p>
+
+<p>And we want all the timecodes in <code class="language-plaintext highlighter-rouge">logtimes</code> by their name instead of by id for employee id = 1.</p>
+
+<p>Here’s one way to solve it with a cross join</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>SELECT LogTimesTimecodes.* FROM (
+  SELECT lt.id, lt.emp_id, lt.date, lt.hours_worked, t.timecode 
+  FROM LOGTIMES lt FULL JOIN TIMECODES t on lt.timecode_id = t.id 
+  WHERE lt.id IS NOT NULL) as LogTimesTimecodes 
+WHERE LogTimesTimecodes.emp_id = 1
+</code></pre></div></div>
+
+<p>This query is taking the two tables <code class="language-plaintext highlighter-rouge">LOGTIMES</code> (lt) and <code class="language-plaintext highlighter-rouge">TIMECODES</code> (t) and matching each row where <code class="language-plaintext highlighter-rouge">LOGTIMES</code> timecode_id column equals <code class="language-plaintext highlighter-rouge">TIMECODES</code> id column. And it is throwing out all rows where <code class="language-plaintext highlighter-rouge">LOGTIMES</code> id value is NULL. This query results in another table called LogTimesTimecodes and I filter this table to only include rows that have an employee id = 1.</p>
+
+<p>The resulting table will be this</p>
+
+<p><img src="/assets/table_after_cross_join.png" alt="table_after_cross_join" /></p>
+
+<p>Here is another way to write the same query and this way uses an inner join</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>SELECT LogTimesTimecodes.* FROM (
+  SELECT lt.id, lt.emp_id, lt.date,
+  lt.hours_worked, t.timecode
+  FROM LOGTIMES lt INNER JOIN TIMECODES t on
+  lt.timecode_id=t.id)
+  as LogTimesTimecodes
+WHERE LogTimesTimecodes.id=1
+ )
+</code></pre></div></div>
+<p>This will produce the same table</p>
+
+<p><img src="/assets/table_after_cross_join.png" alt="table_after_cross_join" /></p>
+
+<p>Although my database is not that large the more efficent way to run this query would be the second way (the INNER JOIN). This is because the cross join initially produced a table with 5 rows (if no join clause was specified 9 rows would be the result table) and then was filtered down to ignore the NULL values. The second query creates a table with a smaller amount of rows because only the rows that have matching id values are stitched together. The key difference between the 2 queries is the subquery</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  SELECT lt.id, lt.emp_id, lt.date, lt.hours_worked, t.timecode 
+  FROM LOGTIMES lt FULL JOIN TIMECODES t on lt.timecode_id = t.id 
+  WHERE lt.id IS NOT NULL) as LogTimesTimecodes 
+</code></pre></div></div>
+<p>and</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  SELECT lt.id, lt.emp_id, lt.date,
+  lt.hours_worked, t.timecode
+  FROM LOGTIMES lt INNER JOIN TIMECODES t on
+  lt.timecode_id=t.id)
+  as LogTimesTimecodes
+</code></pre></div></div>
+<p>Without the <code class="language-plaintext highlighter-rouge">WHERE</code> clause the first query would produce a total of 5 rows which is then filtered down and a table (LogTimesTimecodes) is returned. Where as the second query will only populate the new table formed (LogTimesTimecodes) if the id field from <code class="language-plaintext highlighter-rouge">LOGTIMES</code> equals the id field from <code class="language-plaintext highlighter-rouge">TIMECODES</code>. When translating this to a large database the cross join query could take a very long time to run depending on the tables sizes.</p>
+:ET

@@ -1,0 +1,46 @@
+I"�<p>This is the “O” in the SOLID Principles of the five basic principles of object orientated design. The official definition is “software entities (classes, modules, functions, etc.) should be open for extension, but closed for modification.” This means that a developer should be able to make changes to a program without making changes to the classes themselves. This may sound counter intuitive, but perhaps an example will help:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Geometry</span>
+  <span class="k">def</span> <span class="nf">calculate_area</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">shape</span> <span class="o">==</span> <span class="s2">"square"</span>
+      <span class="n">params</span><span class="p">[</span><span class="ss">:length</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span>
+    <span class="k">elsif</span> <span class="n">shape</span> <span class="o">==</span> <span class="s2">"circle"</span>
+      <span class="n">params</span><span class="p">[</span><span class="ss">:radius</span><span class="p">]</span> <span class="o">*</span> <span class="n">params</span><span class="p">[</span><span class="ss">:radius</span><span class="p">]</span> <span class="o">*</span> <span class="mf">3.14</span> 
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>This is a violation of the open and closed principle because we if we add another shape like a rectangle we would need modify <code class="language-plaintext highlighter-rouge">#calculate_area</code>. A better way to write this would be</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Geometry</span>
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+    <span class="vi">@shape</span> <span class="o">=</span> <span class="n">shape</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">calculate_area</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="vi">@shape</span><span class="p">.</span><span class="nf">calculate_area</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">Square</span>
+  <span class="k">def</span> <span class="nf">calculate_area</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">params</span><span class="p">[</span><span class="ss">:length</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">Circle</span>
+  <span class="k">def</span> <span class="nf">calculate_area</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">params</span><span class="p">[</span><span class="ss">:radius</span><span class="p">]</span> <span class="o">*</span> <span class="n">params</span><span class="p">[</span><span class="ss">:radius</span><span class="p">]</span> <span class="o">*</span> <span class="mf">3.14</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>This way if a developer wants to add another shape with <code class="language-plaintext highlighter-rouge">#calculate_area</code> a new class can be created for each new shape.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Rectangle</span>
+  <span class="k">def</span> <span class="nf">calculate_area</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">params</span><span class="p">[</span><span class="ss">:length</span><span class="p">]</span> <span class="o">*</span> <span class="n">params</span><span class="p">[</span><span class="ss">:width</span><span class="p">]</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>This allows the Geometry class to be open for extension, but closed for modification.</p>
+:ET

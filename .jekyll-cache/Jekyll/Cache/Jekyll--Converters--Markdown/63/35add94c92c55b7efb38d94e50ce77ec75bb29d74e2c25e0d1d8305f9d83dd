@@ -1,0 +1,325 @@
+I"��<p>In order to have a better understanding of how redux works and the benefits of it I decided to rebuild it with some slight modifications 
+inspired by one of my mentors. This post does assume knowledge of the basics of redux. It will go into the implementation of redux and hopefully clarify 
+any questions you may have about how it works.  I didn’t embark on rebuilding all the parts
+like middleware, but I wanted to rebuild the bulk of it. I decided to use Typescript which is what the original redux is written in. 
+This post will go through explaining how it works and some of the benefits I saw to this model. 
+I’ll also go through the tests written for it
+so that you will be able to see how it’s used. The code and tests can be found <a href="https://github.com/avni510/react-website">here</a> under <code class="language-plaintext highlighter-rouge">src/state/</code></p>
+
+<h3 id="the-store">The Store</h3>
+
+<p>The store is the state container. One of the main principles of redux is to have all the state live in one object which is immutable. All
+updates to the state produce a new state object. This allows for a simplified architecture. Instead of state being spread across many files 
+and losing track of what’s stored in state, redux makes it clear that state is stored only in one place. This has a few advantages, making it easier
+to debug and having clarity of what’s stored in the state being a few of them.</p>
+
+<p>At it’s most basic level, the store is a class that takes in an object which is the state. And we can <code class="language-plaintext highlighter-rouge">setState</code> to a new state object when needed. 
+Just like this:</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">test</span><span class="p">(</span><span class="dl">'</span><span class="s1">setState_updatesTheState</span><span class="dl">'</span><span class="p">,</span> <span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="nx">state</span> <span class="o">=</span> <span class="p">{</span><span class="na">colors</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">blue</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">orange</span><span class="dl">'</span><span class="p">]}</span>
+  <span class="kd">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Store</span><span class="p">(</span><span class="nx">state</span><span class="p">);</span>
+
+  <span class="kd">const</span> <span class="nx">newState</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">colors</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">blue</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">orange</span><span class="dl">'</span><span class="p">],</span>
+    <span class="na">favoriteColor</span><span class="p">:</span> <span class="dl">'</span><span class="s1">black</span><span class="dl">'</span>
+  <span class="p">}</span>
+
+  <span class="k">await</span> <span class="nx">store</span><span class="p">.</span><span class="nx">setState</span><span class="p">(</span><span class="nx">newState</span><span class="p">)</span>
+
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">()).</span><span class="nx">toEqual</span><span class="p">(</span><span class="nx">newState</span><span class="p">)</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p>The state also has a list of subscribers. These are functions that take the new state. We can add subscribers to our list by calling the subscribe
+method.</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">export</span> <span class="nx">type</span> <span class="nx">Subscriber</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">(</span><span class="nx">state</span><span class="p">:</span> <span class="nx">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="k">void</span> <span class="o">|</span> <span class="nb">Promise</span><span class="o">&lt;</span><span class="k">void</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="kr">public</span> <span class="nx">subscribe</span><span class="p">(</span><span class="nx">subscriber</span><span class="p">:</span> <span class="nx">Subscriber</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">):</span> <span class="k">void</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">subscribers</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">subscriber</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>So our <code class="language-plaintext highlighter-rouge">setState</code> function would then set the store to the new state as well as push the new state to all of the subscribers.</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">public</span> <span class="k">async</span> <span class="nx">setState</span><span class="p">(</span><span class="nx">newState</span><span class="p">:</span> <span class="nx">T</span><span class="p">):</span> <span class="nb">Promise</span><span class="o">&lt;</span><span class="k">void</span><span class="o">&gt;</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="nx">newState</span><span class="p">;</span>
+  <span class="k">await</span> <span class="nb">Promise</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">subscribers</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="k">async</span> <span class="p">(</span><span class="nx">subscriber</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">subscriber</span><span class="p">(</span><span class="nx">newState</span><span class="p">))</span>
+  <span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Tying it all together we would use it in a way like this:</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">test</span><span class="p">(</span><span class="dl">'</span><span class="s1">setState_pushesStateToSubscribers</span><span class="dl">'</span><span class="p">,</span> <span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="nx">state</span> <span class="o">=</span> <span class="p">{</span><span class="na">colors</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">blue</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">orange</span><span class="dl">'</span><span class="p">]}</span>
+  <span class="kd">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Store</span><span class="p">(</span><span class="nx">state</span><span class="p">);</span>
+
+  <span class="kd">const</span> <span class="nx">newState</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">colors</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">blue</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">orange</span><span class="dl">'</span><span class="p">],</span>
+    <span class="na">favoriteColor</span><span class="p">:</span> <span class="dl">'</span><span class="s1">black</span><span class="dl">'</span>
+  <span class="p">}</span>
+
+  <span class="kd">let</span> <span class="nx">newStateReceived</span><span class="p">;</span>
+  <span class="kd">const</span> <span class="nx">subscriber</span> <span class="o">=</span> <span class="p">(</span><span class="nx">state</span><span class="p">):</span> <span class="k">void</span>  <span class="o">=&gt;</span> <span class="nx">newStateReceived</span> <span class="o">=</span> <span class="nx">state</span>
+
+  <span class="nx">store</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">subscriber</span><span class="p">)</span>
+
+  <span class="k">await</span> <span class="nx">store</span><span class="p">.</span><span class="nx">setState</span><span class="p">(</span><span class="nx">newState</span><span class="p">)</span>
+
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">()).</span><span class="nx">toEqual</span><span class="p">(</span><span class="nx">newState</span><span class="p">)</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">newStateReceived</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="nx">newState</span><span class="p">)</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p>The store also has a couple other helpful functions. If we no longer want to push the state to a subscriber we can unsubscribe, which essentially
+removes it from our list of subscribers.</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">export</span> <span class="nx">type</span> <span class="nx">Subscriber</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">(</span><span class="nx">state</span><span class="p">:</span> <span class="nx">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="k">void</span> <span class="o">|</span> <span class="nb">Promise</span><span class="o">&lt;</span><span class="k">void</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="kr">public</span> <span class="nx">unsubscribe</span><span class="p">(</span><span class="nx">toUnsubscribe</span><span class="p">:</span> <span class="nx">Subscriber</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">):</span> <span class="k">void</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">subscribers</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">subscribers</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">subscriber</span> <span class="o">=&gt;</span>
+    <span class="nx">subscriber</span> <span class="o">!==</span> <span class="nx">toUnsubscribe</span>
+  <span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>We also have an <code class="language-plaintext highlighter-rouge">update</code> function. It takes in a function where the parameter of that function is the current state. 
+The function then returns a new state object.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">export</span> <span class="nx">type</span> <span class="nx">Update</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">(</span><span class="nx">state</span><span class="p">:</span> <span class="nx">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">T</span><span class="p">;</span>
+
+<span class="kr">public</span> <span class="k">async</span> <span class="nx">update</span><span class="p">(</span><span class="nx">updateFunc</span><span class="p">:</span> <span class="nx">Update</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">):</span> <span class="nb">Promise</span><span class="o">&lt;</span><span class="k">void</span><span class="o">&gt;</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">(</span><span class="nx">updateFunc</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">));</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The corresponding test</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nx">test</span><span class="p">(</span><span class="dl">'</span><span class="s1">update_appliesUpdatesToState</span><span class="dl">'</span><span class="p">,</span> <span class="k">async</span><span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+   <span class="kd">const</span> <span class="nx">state</span> <span class="o">=</span> <span class="p">{</span><span class="na">colors</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">blue</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">orange</span><span class="dl">'</span><span class="p">]}</span>
+   <span class="kd">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Store</span><span class="p">(</span><span class="nx">state</span><span class="p">);</span>
+   <span class="kd">const</span> <span class="nx">updateFunc</span> <span class="o">=</span> <span class="p">(</span><span class="nx">currentState</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+     <span class="k">return</span> <span class="p">{</span><span class="na">colors</span><span class="p">:</span> <span class="nx">currentState</span><span class="p">.</span><span class="nx">colors</span><span class="p">.</span><span class="nx">concat</span><span class="p">([</span><span class="dl">'</span><span class="s1">black</span><span class="dl">'</span><span class="p">])}</span>
+   <span class="p">}</span>
+
+   <span class="k">await</span> <span class="nx">store</span><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class="nx">updateFunc</span><span class="p">);</span>
+
+   <span class="nx">expect</span><span class="p">(</span><span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">()).</span><span class="nx">toEqual</span><span class="p">({</span>
+     <span class="na">colors</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">blue</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">orange</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">black</span><span class="dl">'</span><span class="p">]</span>
+   <span class="p">})</span>
+ <span class="p">})</span>
+</code></pre></div></div>
+
+<h3 id="the-reducer">The Reducer</h3>
+
+<p>On to the reducer! The job a reducer is to take an action and return a new state object. In this version of the reducer there’s a slight
+modification. Instead of each reducer having access to the entire state tree. It only has access to its specific value in the state object. Below is an
+example of the state, different action types, and reducers.</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">type</span> <span class="nx">TestAction</span> <span class="o">=</span> <span class="nx">ColorsAction</span> <span class="o">|</span> <span class="nx">ColorsDisplayAction</span>
+
+<span class="nx">type</span> <span class="nx">ColorsAction</span> <span class="o">=</span> <span class="nx">AddColor</span> <span class="o">|</span> <span class="nx">RemoveColor</span>
+<span class="nx">type</span> <span class="nx">AddColor</span> <span class="o">=</span> <span class="p">{</span> <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">add_color</span><span class="dl">'</span><span class="p">,</span> <span class="na">color</span><span class="p">:</span> <span class="nx">string</span> <span class="p">}</span>
+<span class="nx">type</span> <span class="nx">RemoveColor</span> <span class="o">=</span> <span class="p">{</span> <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">remove_color</span><span class="dl">'</span><span class="p">,</span> <span class="na">color</span><span class="p">:</span> <span class="nx">string</span> <span class="p">}</span>
+
+<span class="nx">type</span> <span class="nx">ColorsDisplayAction</span> <span class="o">=</span> <span class="nx">IncColor</span> <span class="o">|</span> <span class="nx">DecColor</span>
+<span class="nx">type</span> <span class="nx">IncColor</span> <span class="o">=</span> <span class="p">{</span> <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">increment_color</span><span class="dl">'</span> <span class="p">}</span>
+<span class="nx">type</span> <span class="nx">DecColor</span> <span class="o">=</span> <span class="p">{</span> <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">decrement_color</span><span class="dl">'</span> <span class="p">}</span>
+
+<span class="nx">type</span> <span class="nx">TestState</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">colors</span><span class="p">:</span> <span class="nx">string</span><span class="p">[],</span>
+  <span class="na">colorsDisplay</span><span class="p">:</span> <span class="nx">number</span>
+<span class="p">}</span>
+
+<span class="kd">const</span> <span class="nx">state</span> <span class="o">=</span> <span class="p">{</span> <span class="na">colors</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">blue</span><span class="dl">'</span><span class="p">],</span> <span class="na">colorsDisplay</span><span class="p">:</span> <span class="mi">3</span> <span class="p">}</span>
+<span class="kd">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Store</span><span class="o">&lt;</span><span class="nx">TestState</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">state</span><span class="p">);</span>
+
+<span class="cm">/* colorsState is only ['blue'] (not the entire state object) */</span>
+<span class="kd">const</span> <span class="nx">colorsReducer</span> <span class="o">=</span> <span class="p">(</span><span class="nx">action</span><span class="p">:</span> <span class="nx">TestAction</span><span class="p">,</span> <span class="nx">colorsState</span><span class="p">:</span> <span class="nx">string</span><span class="p">[])</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="k">switch</span> <span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">case</span> <span class="dl">'</span><span class="s1">add_color</span><span class="dl">'</span><span class="p">:</span>
+      <span class="k">return</span> <span class="nx">colorsState</span><span class="p">.</span><span class="nx">concat</span><span class="p">([</span><span class="nx">action</span><span class="p">.</span><span class="nx">color</span><span class="p">]);</span>
+    <span class="k">case</span> <span class="dl">'</span><span class="s1">remove_color</span><span class="dl">'</span><span class="p">:</span>
+      <span class="k">return</span> <span class="nx">colorsState</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">color</span> <span class="o">=&gt;</span> <span class="nx">color</span> <span class="o">!==</span> <span class="nx">action</span><span class="p">.</span><span class="nx">color</span><span class="p">);</span>
+    <span class="nl">default</span><span class="p">:</span>
+      <span class="k">return</span> <span class="nx">colorsState</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// colorsDisplayState is only 3 (not the entire state object)</span>
+<span class="kd">const</span> <span class="nx">colorsDisplayReducer</span> <span class="o">=</span> <span class="p">(</span><span class="nx">action</span><span class="p">:</span> <span class="nx">TestAction</span><span class="p">,</span> <span class="nx">colorsDisplayState</span><span class="p">:</span> <span class="nx">number</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="k">switch</span> <span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">case</span> <span class="dl">'</span><span class="s1">increment_color</span><span class="dl">'</span><span class="p">:</span>
+      <span class="k">return</span> <span class="nx">colorsDisplayState</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">case</span> <span class="dl">'</span><span class="s1">decrement_color</span><span class="dl">'</span><span class="p">:</span>
+      <span class="k">return</span> <span class="nx">colorsDisplayState</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="na">default</span><span class="p">:</span>
+      <span class="k">return</span> <span class="nx">colorsDisplayState</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Before we dive into the core implementation of a reducer, I want go into a util that I created that will be helpful for us.
+This is useful for creating a new javascript object, instead of mutating one with new attributes. It takes in the object that
+we want to update, the key that we want to update in that object, and a function that takes the value of that key and returns a new
+value. This will then return a new object with corresponding updates.</p>
+
+<p>It is used like this:</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">test</span><span class="p">(</span><span class="dl">'</span><span class="s1">updateObject_returnsANewObjectUpdated</span><span class="dl">'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="nx">state</span> <span class="o">=</span> <span class="p">{</span><span class="na">a</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="na">b</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">hello</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">world</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">foo</span><span class="dl">'</span><span class="p">]}</span>
+
+  <span class="kd">const</span> <span class="nx">newState</span> <span class="o">=</span> <span class="nx">updateObject</span><span class="p">(</span>
+    <span class="nx">state</span><span class="p">,</span>
+    <span class="dl">'</span><span class="s1">a</span><span class="dl">'</span><span class="p">,</span>
+    <span class="p">(</span><span class="na">value</span><span class="p">:</span> <span class="kr">number</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">value</span> <span class="o">+</span> <span class="mi">2</span>
+  <span class="p">);</span>
+
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">newState</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">({</span><span class="na">a</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="na">b</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">hello</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">world</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">foo</span><span class="dl">'</span><span class="p">]})</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p>This is the corresponding code to achieve that.</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">export</span> <span class="kd">function</span> <span class="nx">updateObject</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">(</span>
+  <span class="nx">toUpdate</span><span class="p">:</span> <span class="nx">T</span><span class="p">,</span>
+  <span class="nx">key</span><span class="p">:</span> <span class="kr">keyof</span> <span class="nx">T</span><span class="p">,</span>
+  <span class="nx">valueFunc</span><span class="p">:</span> <span class="p">(</span><span class="nx">value</span><span class="p">:</span> <span class="nx">T</span><span class="p">[</span><span class="kr">keyof</span> <span class="nx">T</span><span class="p">])</span> <span class="o">=&gt;</span> <span class="nx">T</span><span class="p">[</span><span class="kr">keyof</span> <span class="nx">T</span><span class="p">]</span>
+<span class="p">):</span> <span class="nx">T</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">assign</span><span class="p">(</span>
+    <span class="p">{},</span>
+    <span class="nx">toUpdate</span><span class="p">,</span>
+    <span class="p">{[</span><span class="nx">key</span><span class="p">]:</span> <span class="nx">valueFunc</span><span class="p">(</span><span class="nx">toUpdate</span><span class="p">[</span><span class="nx">key</span><span class="p">])}</span>
+  <span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Now on to the core implementation of the reducer. Our goal is to create a function that can achieve this:</p>
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nx">test</span><span class="p">(</span><span class="dl">'</span><span class="s1">combine</span><span class="dl">'</span><span class="p">,</span> <span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+   <span class="kd">const</span> <span class="nx">state</span> <span class="o">=</span> <span class="p">{</span> <span class="na">colors</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">blue</span><span class="dl">'</span><span class="p">],</span> <span class="na">colorsDisplay</span><span class="p">:</span> <span class="mi">3</span> <span class="p">}</span>
+   <span class="kd">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Store</span><span class="o">&lt;</span><span class="nx">TestState</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">state</span><span class="p">);</span>
+
+   <span class="kd">const</span> <span class="nx">actionOne</span> <span class="o">=</span> <span class="p">{</span> <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">add_color</span><span class="dl">'</span><span class="p">,</span> <span class="na">color</span><span class="p">:</span> <span class="dl">'</span><span class="s1">black</span><span class="dl">'</span> <span class="p">};</span>
+
+   <span class="c1">// this action will be sent to the colorsReducer with the colors state. </span>
+   <span class="c1">// The colorsReducer will return a new colors state.</span>
+
+   <span class="kd">const</span> <span class="nx">reducer</span> <span class="o">=</span> <span class="nx">combine</span><span class="p">({</span>
+     <span class="na">colors</span><span class="p">:</span> <span class="nx">colorsReducer</span><span class="p">,</span>
+     <span class="na">colorsDisplay</span><span class="p">:</span> <span class="nx">colorsDisplayReducer</span>
+   <span class="p">});</span>
+
+  <span class="c1">// this is a new state object. It does not mutate the existing state object.</span>
+   <span class="kd">const</span> <span class="nx">newStateOne</span> <span class="o">=</span> <span class="nx">reducer</span><span class="p">(</span><span class="nx">actionOne</span><span class="p">,</span> <span class="nx">state</span><span class="p">)</span>
+
+   <span class="nx">expect</span><span class="p">(</span><span class="nx">newStateOne</span><span class="p">.</span><span class="nx">colors</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">([</span><span class="dl">'</span><span class="s1">blue</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">black</span><span class="dl">'</span><span class="p">])</span>
+   <span class="nx">expect</span><span class="p">(</span><span class="nx">newStateOne</span><span class="p">.</span><span class="nx">colorsDisplay</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>The combine function takes in an object with the keys of the state and the values with the appropriate reducer, which will return us a new value
+for that key.</p>
+
+<p>We’re going to have two useful types for us. That we can use in our combine function.</p>
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/* our main reducer can be described by taking in an action and the state object and
+returning a new state object. */</span>
+<span class="k">export</span> <span class="kd">type</span> <span class="nx">Reducer</span><span class="o">&lt;</span><span class="nx">TAction</span><span class="p">,</span> <span class="nx">TState</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">(</span><span class="nx">action</span><span class="p">:</span> <span class="nx">TAction</span><span class="p">,</span> <span class="nx">state</span><span class="p">:</span> <span class="nx">TState</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">TState</span>
+
+<span class="cm">/* the combine function will take in an object with the keys of the state 
+and values of a reducer that operates on the corresponding value 
+of the state. */</span>
+<span class="k">export</span> <span class="kd">type</span> <span class="nx">Combine</span><span class="o">&lt;</span><span class="nx">TAction</span><span class="p">,</span> <span class="nx">TState</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">{</span>
+   <span class="p">[</span><span class="nx">K</span> <span class="k">in</span> <span class="kr">keyof</span> <span class="nx">TState</span><span class="p">]:</span> <span class="nx">Reducer</span><span class="o">&lt;</span><span class="nx">TAction</span><span class="p">,</span> <span class="nx">TState</span><span class="p">[</span><span class="nx">K</span><span class="p">]</span><span class="o">&gt;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Here’s the big one:</p>
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/* this function will return another function which takes in an action 
+and the current state. It will then return a new state object. */</span>
+
+<span class="k">export</span> <span class="kd">function</span> <span class="nx">combine</span><span class="o">&lt;</span><span class="nx">TAction</span><span class="p">,</span> <span class="nx">TState</span> <span class="kd">extends</span> <span class="p">{[</span><span class="na">key</span><span class="p">:</span> <span class="kr">string</span><span class="p">]:</span> <span class="kr">any</span><span class="p">}</span><span class="o">&gt;</span><span class="p">(</span>
+  <span class="nx">reducers</span><span class="p">:</span> <span class="nx">Combine</span><span class="o">&lt;</span><span class="nx">TAction</span><span class="p">,</span> <span class="nx">TState</span><span class="o">&gt;</span>
+<span class="p">):</span> <span class="nx">Reducer</span><span class="o">&lt;</span><span class="nx">TAction</span><span class="p">,</span> <span class="nx">TState</span><span class="o">&gt;</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">(</span><span class="na">action</span><span class="p">:</span> <span class="nx">TAction</span><span class="p">,</span> <span class="na">state</span><span class="p">:</span> <span class="nx">TState</span><span class="p">):</span> <span class="nx">TState</span> <span class="o">=&gt;</span> <span class="p">{</span>
+
+    <span class="cm">/* this will take the keys of the parameter. For each key, we give it 
+    the current state object. We then update the value for 
+    that key in the state object by calling its corresponding reducer. */</span>
+
+    <span class="k">return</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">reducers</span><span class="p">).</span><span class="nx">reduce</span><span class="p">(</span>
+      <span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="na">key</span><span class="p">:</span> <span class="kr">keyof</span> <span class="nx">TState</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="cm">/* In the example above this would be colorsReducer or colorsDisplayReducer */</span>
+        <span class="kd">const</span> <span class="nx">reducer</span> <span class="o">=</span> <span class="nx">reducers</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span>
+
+        <span class="cm">/* We create a new state object based on the value 
+        returned by the reducer (ex: colorsReducer, colorsDisplayReducer) */</span>
+        <span class="k">return</span> <span class="nx">updateObject</span><span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">stateValue</span> <span class="o">=&gt;</span> <span class="nx">reducer</span><span class="p">(</span><span class="nx">action</span><span class="p">,</span> <span class="nx">stateValue</span><span class="p">))</span>
+      <span class="p">},</span>
+      <span class="nx">state</span>
+    <span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Tying it all together, we can now achieve this functionality.</p>
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">test</span><span class="p">(</span><span class="dl">'</span><span class="s1">combine</span><span class="dl">'</span><span class="p">,</span> <span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="nx">state</span> <span class="o">=</span> <span class="p">{</span> <span class="na">colors</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">blue</span><span class="dl">'</span><span class="p">],</span> <span class="na">colorsDisplay</span><span class="p">:</span> <span class="mi">3</span> <span class="p">}</span>
+  <span class="kd">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Store</span><span class="o">&lt;</span><span class="nx">TestState</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">state</span><span class="p">);</span>
+
+  <span class="kd">const</span> <span class="nx">actionOne</span> <span class="o">=</span> <span class="p">{</span> <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">add_color</span><span class="dl">'</span><span class="p">,</span> <span class="na">color</span><span class="p">:</span> <span class="dl">'</span><span class="s1">black</span><span class="dl">'</span> <span class="p">};</span>
+
+  <span class="kd">const</span> <span class="nx">reducer</span> <span class="o">=</span> <span class="nx">combine</span><span class="p">({</span>
+    <span class="na">colors</span><span class="p">:</span> <span class="nx">colorsReducer</span><span class="p">,</span>
+    <span class="na">colorsDisplay</span><span class="p">:</span> <span class="nx">colorsDisplayReducer</span>
+  <span class="p">});</span>
+
+  <span class="kd">const</span> <span class="nx">newStateOne</span> <span class="o">=</span> <span class="nx">reducer</span><span class="p">(</span><span class="nx">actionOne</span><span class="p">,</span> <span class="nx">state</span><span class="p">)</span>
+
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">newStateOne</span><span class="p">.</span><span class="nx">colors</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">([</span><span class="dl">'</span><span class="s1">blue</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">black</span><span class="dl">'</span><span class="p">])</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">newStateOne</span><span class="p">.</span><span class="nx">colorsDisplay</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+  <span class="kd">const</span> <span class="nx">actionTwo</span> <span class="o">=</span> <span class="p">{</span> <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">increment_color</span><span class="dl">'</span> <span class="p">}</span>
+
+  <span class="kd">const</span> <span class="nx">newStateTwo</span> <span class="o">=</span> <span class="nx">reducer</span><span class="p">(</span><span class="nx">actionTwo</span><span class="p">,</span> <span class="nx">state</span><span class="p">)</span>
+
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">newStateTwo</span><span class="p">.</span><span class="nx">colors</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">([</span><span class="dl">'</span><span class="s1">blue</span><span class="dl">'</span><span class="p">])</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">newStateTwo</span><span class="p">.</span><span class="nx">colorsDisplay</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p>Now there is one last function to create to achieve the functionality that we typically see in the redux. We would like to create
+a dispatcher. Its job is to send the action to our main reducer and update the state in the store accordingly. 
+So we would like to do something like this:</p>
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">test</span><span class="p">(</span><span class="dl">'</span><span class="s1">createDispatch</span><span class="dl">'</span><span class="p">,</span> <span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="nx">state</span> <span class="o">=</span> <span class="p">{</span> <span class="na">colors</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">blue</span><span class="dl">'</span><span class="p">],</span> <span class="na">colorsDisplay</span><span class="p">:</span> <span class="mi">3</span> <span class="p">}</span>
+  <span class="kd">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Store</span><span class="o">&lt;</span><span class="nx">TestState</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">state</span><span class="p">);</span>
+
+  <span class="kd">const</span> <span class="nx">reducer</span> <span class="o">=</span> <span class="nx">combine</span><span class="p">({</span>
+    <span class="na">colors</span><span class="p">:</span> <span class="nx">colorsReducer</span><span class="p">,</span>
+    <span class="na">colorsDisplay</span><span class="p">:</span> <span class="nx">colorsDisplayReducer</span>
+  <span class="p">});</span>
+
+  <span class="c1">// dispatch is a function that takes in an action</span>
+  <span class="kd">const</span> <span class="nx">dispatch</span> <span class="o">=</span> <span class="nx">createDispatch</span><span class="p">(</span><span class="nx">store</span><span class="p">,</span> <span class="nx">reducer</span><span class="p">);</span>
+
+  <span class="k">await</span> <span class="nx">dispatch</span><span class="p">({</span><span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">increment_color</span><span class="dl">'</span><span class="p">})</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">()).</span><span class="nx">toEqual</span><span class="p">({</span> <span class="na">colors</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">blue</span><span class="dl">'</span><span class="p">],</span> <span class="na">colorsDisplay</span><span class="p">:</span> <span class="mi">4</span> <span class="p">})</span>
+
+  <span class="k">await</span> <span class="nx">dispatch</span><span class="p">({</span><span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">remove_color</span><span class="dl">'</span><span class="p">,</span> <span class="na">color</span><span class="p">:</span> <span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">().</span><span class="nx">colors</span><span class="p">[</span><span class="mi">0</span><span class="p">]})</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">()).</span><span class="nx">toEqual</span><span class="p">({</span> <span class="na">colors</span><span class="p">:</span> <span class="p">[],</span> <span class="na">colorsDisplay</span><span class="p">:</span> <span class="mi">4</span> <span class="p">})</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>The implementation of this function will update the state tree.</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">export</span> <span class="kd">function</span> <span class="nx">createDispatch</span><span class="o">&lt;</span><span class="nx">TAction</span><span class="p">,</span> <span class="nx">TState</span><span class="o">&gt;</span><span class="p">(</span>
+  <span class="nx">store</span><span class="p">:</span> <span class="nx">Store</span><span class="o">&lt;</span><span class="nx">TState</span><span class="o">&gt;</span><span class="p">,</span>
+  <span class="nx">reducer</span><span class="p">:</span> <span class="nx">Reducer</span><span class="o">&lt;</span><span class="nx">TAction</span><span class="p">,</span> <span class="nx">TState</span><span class="o">&gt;</span>
+<span class="p">)</span> <span class="p">{</span>
+  <span class="cm">/* with the new state returned by the reducer it will set the new state of the store */</span>
+
+  <span class="k">return</span> <span class="p">(</span><span class="nx">action</span><span class="p">:</span> <span class="nx">TAction</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">store</span><span class="p">.</span><span class="nx">update</span><span class="p">(</span>
+    <span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">reducer</span><span class="p">(</span><span class="nx">action</span><span class="p">,</span> <span class="nx">state</span><span class="p">)</span>
+  <span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>This is the basics of redux! Many higher order functions, but the overall implementation is relatively simple. The simplicity
+and the immutablility of the state object will give us more visibility into the state object and hopefully make bugs easier to track down.
+I hope this post was helpful in understanding the internals. The next post will go into how we can use this in our components.</p>
+:ET

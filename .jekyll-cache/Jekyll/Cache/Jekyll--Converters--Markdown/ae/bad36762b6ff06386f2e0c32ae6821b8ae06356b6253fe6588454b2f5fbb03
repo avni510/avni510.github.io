@@ -1,0 +1,4 @@
+I"‹<p>To wrap up my process of redux, I wanted to write a blogpost about a front end pattern from one of my previous projects that works well with redux. 
+This post will go into how to break out code into separate files that will consolidate state, dispatching actions, and making API calls. For a deeper dive take
+a look at the code <a href="https://github.com/avni510/react-website">here</a></p>
+:ET

@@ -1,0 +1,5 @@
+I"j<h3 id="use-case-at-edovo">Use case at Edovo</h3>
+<p>The company I work for, Edovo, had the desire rearchitect an old content system and rebuild it using Elasticsearch. I had the pleasure
+of working on this project. This being my first time using Elasticsearch I learned a lot. This post goes into how we architected our cluster
+and lessons learned from it.</p>
+:ET

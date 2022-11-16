@@ -1,0 +1,81 @@
+I"R)<p>In <a href="https://www.youtube.com/watch?v=r5i_OiZw6Sw&amp;list=PLZdCLR02grLp4W4ySd1sHPOsK83gvqBQp&amp;index=18">Eric Normand’s talk</a> at Clojure/west he covers the benefits of generative testing. He specifically covers Clojure, although generative testing can be used for any language. In unit testing the engineer comes up with the different scenarios that a user could possibly select and asserts that their program works in the correct way. With generative testing, the engineer defines the properties the result should have and the test runner generates randomized data to check against. In Eric’s talk he creates a simple key-value database with some basic operations. Here are those operations</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">db/create</span><span class="p">)</span><span class="w">
+
+</span><span class="p">(</span><span class="nf">db/clear!</span><span class="w"> </span><span class="n">db</span><span class="p">)</span><span class="w">
+</span><span class="p">(</span><span class="nf">db/store!</span><span class="w"> </span><span class="n">db</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="n">v</span><span class="p">)</span><span class="w">
+</span><span class="p">(</span><span class="nf">db/delete!</span><span class="w"> </span><span class="n">db</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="w">
+</span><span class="p">(</span><span class="nf">db/fetch</span><span class="w"> </span><span class="n">db</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="w">
+</span><span class="p">(</span><span class="nf">db/size</span><span class="w"> </span><span class="n">db</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>These basic operations should be relatively self explanatory. We can then write a few basic tests on this simple system in clojure.test.</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">deftest</span><span class="w"> </span><span class="n">store-contains</span><span class="w">
+  </span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[</span><span class="n">db</span><span class="w"> </span><span class="p">(</span><span class="nf">db/create</span><span class="p">)</span><span class="w">
+        </span><span class="n">k</span><span class="w"> </span><span class="s">"age"</span><span class="w">
+        </span><span class="n">v</span><span class="w"> </span><span class="s">"23"</span><span class="p">]</span><span class="w">
+    </span><span class="p">(</span><span class="nf">db/store!</span><span class="w"> </span><span class="n">db</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="n">v</span><span class="p">)</span><span class="w">
+    </span><span class="p">(</span><span class="nf">is</span><span class="p">(</span><span class="nb">=</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="p">(</span><span class="nf">db/fetch</span><span class="w"> </span><span class="n">db</span><span class="w"> </span><span class="n">k</span><span class="p">)))))</span><span class="w">
+
+</span><span class="p">(</span><span class="nf">deftest</span><span class="w"> </span><span class="n">clear-empty</span><span class="w">
+  </span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[</span><span class="n">db</span><span class="w"> </span><span class="p">(</span><span class="nf">db/create</span><span class="p">)</span><span class="w">
+        </span><span class="n">k</span><span class="w"> </span><span class="s">"age"</span><span class="w">
+        </span><span class="n">v</span><span class="w"> </span><span class="s">"23"</span><span class="p">]</span><span class="w">
+    </span><span class="p">(</span><span class="nf">db/store!</span><span class="w"> </span><span class="n">db</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="n">v</span><span class="p">)</span><span class="w">
+    </span><span class="p">(</span><span class="nf">db/clear!</span><span class="w"> </span><span class="n">db</span><span class="p">)</span><span class="w">
+    </span><span class="p">(</span><span class="nf">is</span><span class="w"> </span><span class="p">(</span><span class="nb">zero?</span><span class="w"> </span><span class="n">db/size</span><span class="w"> </span><span class="n">db</span><span class="p">))))</span><span class="w">
+</span></code></pre></div></div>
+
+<p>These are typical unit test cases we would run for our system. But in fact this can be a very poorly tested system. Typically, as a engineers we end up testing relatively basic scenarios. It’s difficult to think of odd user scenarios that could potentially break your system. We try our best to think about edgecases, but the reality is they are difficult to think of. For example, if a user enters 3 actions of our basic system, they have 5 functions they could use for each of their actions (assuming the database is already created).</p>
+
+<p>Action 1:</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">db/clear!</span><span class="w"> </span><span class="n">db</span><span class="p">)</span><span class="w">
+</span><span class="p">(</span><span class="nf">db/store!</span><span class="w"> </span><span class="n">db</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="n">v</span><span class="p">)</span><span class="w">
+</span><span class="p">(</span><span class="nf">db/delete!</span><span class="w"> </span><span class="n">db</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="w">
+</span><span class="p">(</span><span class="nf">db/fetch</span><span class="w"> </span><span class="n">db</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="w">
+</span><span class="p">(</span><span class="nf">db/size</span><span class="w"> </span><span class="n">db</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Action 2:</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">db/clear!</span><span class="w"> </span><span class="n">db</span><span class="p">)</span><span class="w">
+</span><span class="p">(</span><span class="nf">db/store!</span><span class="w"> </span><span class="n">db</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="n">v</span><span class="p">)</span><span class="w">
+</span><span class="p">(</span><span class="nf">db/delete!</span><span class="w"> </span><span class="n">db</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="w">
+</span><span class="p">(</span><span class="nf">db/fetch</span><span class="w"> </span><span class="n">db</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="w">
+</span><span class="p">(</span><span class="nf">db/size</span><span class="w"> </span><span class="n">db</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Action 3:</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">db/clear!</span><span class="w"> </span><span class="n">db</span><span class="p">)</span><span class="w">
+</span><span class="p">(</span><span class="nf">db/store!</span><span class="w"> </span><span class="n">db</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="n">v</span><span class="p">)</span><span class="w">
+</span><span class="p">(</span><span class="nf">db/delete!</span><span class="w"> </span><span class="n">db</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="w">
+</span><span class="p">(</span><span class="nf">db/fetch</span><span class="w"> </span><span class="n">db</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="w">
+</span><span class="p">(</span><span class="nf">db/size</span><span class="w"> </span><span class="n">db</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>That’s 5 * 5 * 5 = 125 different combinations of actions. This is close to impossible to test with our traditional unit testing approach. This is where generative testing can be helpful.</p>
+
+<p>Here are some pictures from Eric’s talk where he defines a generative test case using <a href="https://github.com/clojure/test.check">test.check</a> which works with clojure.test.</p>
+
+<p><img src="/assets/generative_testing_1.png" alt="generative_testing" /></p>
+
+<p>The above code generates and randomly generates 20 string inputs. These are strange inputs that we would often not test with unit tests.</p>
+
+<p><img src="/assets/generative_testing_2.png" alt="generative_testing_2" /></p>
+
+<p>This will go through all the given inputs, create a new database, store the randomly generated key and value pairs, and assert they are actually in the database.</p>
+
+<p>These tests work great for testing pieces of your system, but is there a test we can write that would describe the behavior of the entire system?</p>
+
+<p><img src="/assets/generative_testing_3.png" alt="generative_testing_3" /></p>
+
+<p>Here we create many generators. And the last one, <code class="language-plaintext highlighter-rouge">gen-ops</code>, creates a vector of actions executed in a random order, and the number of actions performed is random as well.</p>
+
+<p><img src="/assets/generative_testing_4.png" alt="generative_testing_4" /></p>
+
+<p>This is a sample of our results. Many different operations in different orders again different orders that when we’re writing unit tests we don’t often consider. The talk goes further into how we would assert that our system behaved correctly. But this is just a glimpse into the power the generative testing. It allows us to have a specified amount of random data that we can then test against. It also allow us to thoroughly test the entire behavior of our system. Check out the talk to learn more about it.</p>
+
+:ET

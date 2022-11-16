@@ -1,0 +1,347 @@
+---
+layout: post
+title:  React Redux
+Subtitle: Implementation of Redux Part 1
+author: Avni Kothari
+comments: False
+---
+In order to have a better understanding of how redux works and the benefits of it I decided to rebuild it with some slight modifications 
+inspired by one of my mentors. This post does assume knowledge of the basics of redux. It will go into the implementation of redux and hopefully clarify 
+any questions you may have about how it works.  I didn't embark on rebuilding all the parts
+like middleware, but I wanted to rebuild the bulk of it. I decided to use Typescript which is what the original redux is written in. 
+This post will go through explaining how it works and some of the benefits I saw to this model. 
+I'll also go through the tests written for it
+so that you will be able to see how it's used. The code and tests can be found [here](https://github.com/avni510/react-website) under `src/state/`
+
+### The Store
+
+The store is the state container. One of the main principles of redux is to have all the state live in one object which is immutable. All
+updates to the state produce a new state object. This allows for a simplified architecture. Instead of state being spread across many files 
+and losing track of what's stored in state, redux makes it clear that state is stored only in one place. This has a few advantages, making it easier
+to debug and having clarity of what's stored in the state being a few of them. 
+
+At it's most basic level, the store is a class that takes in an object which is the state. And we can `setState` to a new state object when needed. 
+Just like this:
+```javascript
+test('setState_updatesTheState', async () => {
+  const state = {colors: ['blue', 'orange']}
+  const store = new Store(state);
+
+  const newState = {
+    colors: ['blue', 'orange'],
+    favoriteColor: 'black'
+  }
+
+  await store.setState(newState)
+
+  expect(store.getState()).toEqual(newState)
+});
+```
+
+The state also has a list of subscribers. These are functions that take the new state. We can add subscribers to our list by calling the subscribe
+method.
+```javascript
+export type Subscriber<T> = (state: T) => void | Promise<void>;
+
+public subscribe(subscriber: Subscriber<T>): void {
+  this.subscribers.push(subscriber);
+}
+```
+
+So our `setState` function would then set the store to the new state as well as push the new state to all of the subscribers.
+```javascript
+public async setState(newState: T): Promise<void> {
+  this.state = newState;
+  await Promise.all(
+    this.subscribers.map(async (subscriber) => subscriber(newState))
+  )
+}
+```
+
+Tying it all together we would use it in a way like this:
+```javascript
+test('setState_pushesStateToSubscribers', async () => {
+  const state = {colors: ['blue', 'orange']}
+  const store = new Store(state);
+
+  const newState = {
+    colors: ['blue', 'orange'],
+    favoriteColor: 'black'
+  }
+
+  let newStateReceived;
+  const subscriber = (state): void  => newStateReceived = state
+
+  store.subscribe(subscriber)
+
+  await store.setState(newState)
+
+  expect(store.getState()).toEqual(newState)
+  expect(newStateReceived).toEqual(newState)
+});
+```
+
+The store also has a couple other helpful functions. If we no longer want to push the state to a subscriber we can unsubscribe, which essentially
+removes it from our list of subscribers.
+```javascript
+export type Subscriber<T> = (state: T) => void | Promise<void>;
+
+public unsubscribe(toUnsubscribe: Subscriber<T>): void {
+  this.subscribers = this.subscribers.filter(subscriber =>
+    subscriber !== toUnsubscribe
+  )
+}
+```
+
+We also have an `update` function. It takes in a function where the parameter of that function is the current state. 
+The function then returns a new state object.
+
+```javascript
+export type Update<T> = (state: T) => T;
+
+public async update(updateFunc: Update<T>): Promise<void> {
+  return this.setState(updateFunc(this.state));
+}
+```
+
+The corresponding test
+```javascript
+ test('update_appliesUpdatesToState', async() => {
+   const state = {colors: ['blue', 'orange']}
+   const store = new Store(state);
+   const updateFunc = (currentState) => {
+     return {colors: currentState.colors.concat(['black'])}
+   }
+
+   await store.update(updateFunc);
+
+   expect(store.getState()).toEqual({
+     colors: ['blue', 'orange', 'black']
+   })
+ })
+```
+
+### The Reducer
+
+On to the reducer! The job a reducer is to take an action and return a new state object. In this version of the reducer there's a slight
+modification. Instead of each reducer having access to the entire state tree. It only has access to its specific value in the state object. Below is an
+example of the state, different action types, and reducers. 
+```javascript
+type TestAction = ColorsAction | ColorsDisplayAction
+
+type ColorsAction = AddColor | RemoveColor
+type AddColor = { type: 'add_color', color: string }
+type RemoveColor = { type: 'remove_color', color: string }
+
+type ColorsDisplayAction = IncColor | DecColor
+type IncColor = { type: 'increment_color' }
+type DecColor = { type: 'decrement_color' }
+
+type TestState = {
+  colors: string[],
+  colorsDisplay: number
+}
+
+const state = { colors: ['blue'], colorsDisplay: 3 }
+const store = new Store<TestState>(state);
+
+/* colorsState is only ['blue'] (not the entire state object) */
+const colorsReducer = (action: TestAction, colorsState: string[]) => {
+  switch (action.type) {
+    case 'add_color':
+      return colorsState.concat([action.color]);
+    case 'remove_color':
+      return colorsState.filter(color => color !== action.color);
+    default:
+      return colorsState;
+  }
+}
+
+// colorsDisplayState is only 3 (not the entire state object)
+const colorsDisplayReducer = (action: TestAction, colorsDisplayState: number) => {
+  switch (action.type) {
+    case 'increment_color':
+      return colorsDisplayState + 1
+    case 'decrement_color':
+      return colorsDisplayState - 1
+    default:
+      return colorsDisplayState
+  }
+}
+```
+
+Before we dive into the core implementation of a reducer, I want go into a util that I created that will be helpful for us.
+This is useful for creating a new javascript object, instead of mutating one with new attributes. It takes in the object that
+we want to update, the key that we want to update in that object, and a function that takes the value of that key and returns a new
+value. This will then return a new object with corresponding updates. 
+
+It is used like this:
+
+```typescript
+test('updateObject_returnsANewObjectUpdated', () => {
+  const state = {a: 1, b: ['hello', 'world', 'foo']}
+
+  const newState = updateObject(
+    state,
+    'a',
+    (value: number) => value + 2
+  );
+
+  expect(newState).toEqual({a: 3, b: ['hello', 'world', 'foo']})
+});
+```
+
+This is the corresponding code to achieve that.
+
+```typescript
+export function updateObject<T>(
+  toUpdate: T,
+  key: keyof T,
+  valueFunc: (value: T[keyof T]) => T[keyof T]
+): T {
+  return Object.assign(
+    {},
+    toUpdate,
+    {[key]: valueFunc(toUpdate[key])}
+  )
+}
+```
+
+Now on to the core implementation of the reducer. Our goal is to create a function that can achieve this:
+```typescript
+ test('combine', async () => {
+   const state = { colors: ['blue'], colorsDisplay: 3 }
+   const store = new Store<TestState>(state);
+
+   const actionOne = { type: 'add_color', color: 'black' };
+
+   // this action will be sent to the colorsReducer with the colors state. 
+   // The colorsReducer will return a new colors state.
+
+   const reducer = combine({
+     colors: colorsReducer,
+     colorsDisplay: colorsDisplayReducer
+   });
+
+  // this is a new state object. It does not mutate the existing state object.
+   const newStateOne = reducer(actionOne, state)
+
+   expect(newStateOne.colors).toEqual(['blue', 'black'])
+   expect(newStateOne.colorsDisplay).toEqual(3)
+})
+```
+
+The combine function takes in an object with the keys of the state and the values with the appropriate reducer, which will return us a new value
+for that key. 
+
+We're going to have two useful types for us. That we can use in our combine function.
+```typescript
+/* our main reducer can be described by taking in an action and the state object and
+returning a new state object. */
+export type Reducer<TAction, TState> = (action: TAction, state: TState) => TState
+
+/* the combine function will take in an object with the keys of the state 
+and values of a reducer that operates on the corresponding value 
+of the state. */
+export type Combine<TAction, TState> = {
+   [K in keyof TState]: Reducer<TAction, TState[K]>
+}
+```
+
+Here's the big one:
+```typescript
+/* this function will return another function which takes in an action 
+and the current state. It will then return a new state object. */
+
+export function combine<TAction, TState extends {[key: string]: any}>(
+  reducers: Combine<TAction, TState>
+): Reducer<TAction, TState> {
+  return (action: TAction, state: TState): TState => {
+
+    /* this will take the keys of the parameter. For each key, we give it 
+    the current state object. We then update the value for 
+    that key in the state object by calling its corresponding reducer. */
+
+    return Object.keys(reducers).reduce(
+      (state, key: keyof TState) => {
+        /* In the example above this would be colorsReducer or colorsDisplayReducer */
+        const reducer = reducers[key]
+
+        /* We create a new state object based on the value 
+        returned by the reducer (ex: colorsReducer, colorsDisplayReducer) */
+        return updateObject(state, key, stateValue => reducer(action, stateValue))
+      },
+      state
+    )
+  }
+}
+```
+
+Tying it all together, we can now achieve this functionality.
+```typescript
+test('combine', async () => {
+  const state = { colors: ['blue'], colorsDisplay: 3 }
+  const store = new Store<TestState>(state);
+
+  const actionOne = { type: 'add_color', color: 'black' };
+
+  const reducer = combine({
+    colors: colorsReducer,
+    colorsDisplay: colorsDisplayReducer
+  });
+
+  const newStateOne = reducer(actionOne, state)
+
+  expect(newStateOne.colors).toEqual(['blue', 'black'])
+  expect(newStateOne.colorsDisplay).toEqual(3)
+
+  const actionTwo = { type: 'increment_color' }
+
+  const newStateTwo = reducer(actionTwo, state)
+
+  expect(newStateTwo.colors).toEqual(['blue'])
+  expect(newStateTwo.colorsDisplay).toEqual(4)
+});
+```
+
+Now there is one last function to create to achieve the functionality that we typically see in the redux. We would like to create
+a dispatcher. Its job is to send the action to our main reducer and update the state in the store accordingly. 
+So we would like to do something like this:
+```typescript
+test('createDispatch', async () => {
+  const state = { colors: ['blue'], colorsDisplay: 3 }
+  const store = new Store<TestState>(state);
+
+  const reducer = combine({
+    colors: colorsReducer,
+    colorsDisplay: colorsDisplayReducer
+  });
+
+  // dispatch is a function that takes in an action
+  const dispatch = createDispatch(store, reducer);
+
+  await dispatch({type: 'increment_color'})
+  expect(store.getState()).toEqual({ colors: ['blue'], colorsDisplay: 4 })
+
+  await dispatch({type: 'remove_color', color: store.getState().colors[0]})
+  expect(store.getState()).toEqual({ colors: [], colorsDisplay: 4 })
+})
+```
+
+The implementation of this function will update the state tree. 
+```javascript
+export function createDispatch<TAction, TState>(
+  store: Store<TState>,
+  reducer: Reducer<TAction, TState>
+) {
+  /* with the new state returned by the reducer it will set the new state of the store */
+
+  return (action: TAction) => store.update(
+    (state) => reducer(action, state)
+  )
+}
+```
+
+This is the basics of redux! Many higher order functions, but the overall implementation is relatively simple. The simplicity
+and the immutablility of the state object will give us more visibility into the state object and hopefully make bugs easier to track down.
+I hope this post was helpful in understanding the internals. The next post will go into how we can use this in our components.  

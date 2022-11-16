@@ -1,0 +1,2 @@
+I"<p>Recursion is often found in many built in functions within Clojure for example in <code class="language-plaintext highlighter-rouge">filter</code> and <code class="language-plaintext highlighter-rouge">map</code>. This blogpost will specifically cover linear and tree recursion.</p>
+:ET

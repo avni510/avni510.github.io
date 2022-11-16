@@ -1,0 +1,85 @@
+I"|<p>To wrap up my process of redux, I wanted to write a blogpost about a front end pattern from one of my previous projects that works well with redux. 
+This post will go into how to break out code into separate files that will consolidate state, dispatching actions, and making API calls. For a deeper dive take
+a look at the code <a href="https://github.com/avni510/react-website">here</a></p>
+
+<p>For each box, I created a folder in my project. The box outlines the purpose of these files. Below I include a code example.</p>
+
+<p><img src="/assets/img/react-services.png" alt="react_services" /></p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">export</span> <span class="nx">type</span> <span class="nx">PhotoService</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">loadPhoto</span><span class="p">():</span> <span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">string</span><span class="o">&gt;</span>
+<span class="p">}</span>
+
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">PhotoServiceAPI</span> <span class="kr">implements</span> <span class="nx">PhotoService</span> <span class="p">{</span>
+  <span class="kr">public</span> <span class="k">async</span> <span class="nx">loadPhoto</span><span class="p">():</span> <span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">string</span><span class="o">&gt;</span> <span class="p">{</span>
+   <span class="k">return</span> <span class="k">await</span> <span class="nx">func</span><span class="p">()</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">const</span> <span class="nx">func</span> <span class="o">=</span> <span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="dl">"</span><span class="s2">A photo</span><span class="dl">"</span>
+</code></pre></div></div>
+
+<p> 
+ </p>
+
+<p><img src="/assets/img/react-commands.png" alt="react_commands" /></p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">export</span> <span class="kr">interface</span> <span class="nx">PhotoCommands</span> <span class="p">{</span>
+  <span class="nx">fetchPhoto</span><span class="p">():</span> <span class="nb">Promise</span><span class="o">&lt;</span><span class="k">void</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">PhotoCommandsDispatcher</span> <span class="kr">implements</span> <span class="nx">PhotoCommands</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">(</span>
+    <span class="kr">private</span> <span class="nx">dispatch</span><span class="p">:</span> <span class="nx">Dispatch</span><span class="o">&lt;</span><span class="nx">PhotoActions</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="kr">private</span> <span class="nx">photoService</span><span class="p">:</span> <span class="nx">PhotoService</span>
+  <span class="p">)</span> <span class="p">{}</span>
+
+  <span class="kr">public</span> <span class="k">async</span> <span class="nx">fetchPhoto</span><span class="p">():</span> <span class="nb">Promise</span><span class="o">&lt;</span><span class="k">void</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">({</span> <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Photo.Loading</span><span class="dl">'</span> <span class="p">});</span>
+    <span class="kd">const</span> <span class="nx">photo</span> <span class="o">=</span> <span class="k">await</span> <span class="k">this</span><span class="p">.</span><span class="nx">photoService</span><span class="p">.</span><span class="nx">loadPhoto</span><span class="p">();</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">({</span> <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Photo.Loaded</span><span class="dl">'</span><span class="p">,</span> <span class="nx">photo</span> <span class="p">});</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p> 
+ </p>
+
+<p><img src="/assets/img/react-state.png" alt="react_state" /></p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">export</span> <span class="nx">type</span> <span class="nx">PhotoState</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">isLoading</span><span class="p">:</span> <span class="nx">boolean</span><span class="p">,</span>
+  <span class="nx">photo</span><span class="p">?:</span> <span class="nx">string</span>
+<span class="p">};</span>
+
+<span class="k">export</span> <span class="kd">const</span> <span class="nx">initialPhotoState</span><span class="p">:</span> <span class="nx">PhotoState</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">isLoading</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+  <span class="na">photo</span><span class="p">:</span> <span class="kc">undefined</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<p> 
+ </p>
+
+<p><img src="/assets/img/react-reducer.png" alt="react_reducer" /></p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">export</span> <span class="nx">type</span> <span class="nx">PhotoActions</span> <span class="o">=</span>
+<span class="p">{</span> <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Photo.Loading</span><span class="dl">'</span> <span class="p">}</span> <span class="o">|</span>
+<span class="p">{</span> <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Photo.Loaded</span><span class="dl">'</span><span class="p">,</span> <span class="na">photo</span><span class="p">:</span> <span class="nx">string</span> <span class="p">}</span>
+
+<span class="k">export</span> <span class="kd">const</span> <span class="nx">photoReducer</span> <span class="o">=</span> <span class="p">(</span><span class="nx">action</span><span class="p">:</span> <span class="nx">PhotoActions</span><span class="p">,</span> <span class="nx">photosState</span><span class="p">:</span> <span class="nx">PhotoState</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="k">switch</span> <span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">case</span> <span class="dl">'</span><span class="s1">Photo.Loaded</span><span class="dl">'</span><span class="p">:</span>
+      <span class="k">return</span> <span class="p">{</span>
+        <span class="p">...</span><span class="nx">photosState</span><span class="p">,</span>
+        <span class="na">isLoading</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+        <span class="na">photo</span><span class="p">:</span> <span class="nx">action</span><span class="p">.</span><span class="nx">photo</span>
+      <span class="p">}</span>
+    <span class="nl">default</span><span class="p">:</span>
+      <span class="k">return</span> <span class="nx">photosState</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p> 
+ </p>
+
+<p>I then consolidated all the setup for the store into a <code class="language-plaintext highlighter-rouge">Setup</code> file. The separation of these files gives each file a specific purpose without bloating
+its responsibility. As our app becomes more complex, we have specific files we can go in and add things to.</p>
+:ET

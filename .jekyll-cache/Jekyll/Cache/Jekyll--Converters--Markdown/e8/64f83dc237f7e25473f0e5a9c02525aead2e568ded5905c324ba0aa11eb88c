@@ -1,0 +1,8 @@
+I"�<p>&lt;!—</p>
+<ul>
+  <li>used in method declaration</li>
+  <li>specifies the exceptions that a method might throw</li>
+  <li>include a throws clause to delcare those exceptions that might be thrown but don’t get caught in the method</li>
+  <li>clearer to read, if other methods want to implement a method that throws exceptions they must be able to handle these exceptions</li>
+</ul>
+:ET

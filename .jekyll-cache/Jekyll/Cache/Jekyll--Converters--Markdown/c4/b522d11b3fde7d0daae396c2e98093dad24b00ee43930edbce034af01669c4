@@ -1,0 +1,65 @@
+I"u<p>This blogpost covers a brief background on the formal definition and theory behind Monoids. It by no means comprehensive or math intensive, but is more so a brief introduction to monoids. A monoid is a mathematical term, but is a practical pattern in functional programming.</p>
+
+<p>It is a system that satisfies these three rules:</p>
+
+<p><strong>Closure</strong> - Given a function with parameters, the type of the parameters and the type of the return value are the same</p>
+
+<p>An example is the <code class="language-plaintext highlighter-rouge">+</code> function</p>
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">+</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w">
+</span><span class="c1">; =&gt; 3</span><span class="w">
+</span></code></pre></div></div>
+<p>It takes integers and returns another integer</p>
+
+<p>Another examples is the <code class="language-plaintext highlighter-rouge">or</code> function</p>
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">or</span><span class="w"> </span><span class="n">true</span><span class="w"> </span><span class="n">false</span><span class="p">)</span><span class="w">
+</span><span class="c1">; =&gt; true</span><span class="w">
+</span></code></pre></div></div>
+<p>It takes in booleans and returns a boolean</p>
+
+<p>The fact that a function’s parameters and the function’s return value is of the type same is known as closure</p>
+
+<p><strong>Associativity</strong> - Given that your function abides by the closure property, the order of function operation does not matter, the same value will be returned</p>
+
+<p>Back to the <code class="language-plaintext highlighter-rouge">+</code> example</p>
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">+</span><span class="w"> </span><span class="p">(</span><span class="nb">+</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span><span class="w">
+</span><span class="c1">; =&gt; 6</span><span class="w">
+</span></code></pre></div></div>
+<p>Is the same as</p>
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">+</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">(</span><span class="nb">+</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="mi">3</span><span class="p">))</span><span class="w">
+</span><span class="c1">; =&gt; 6</span><span class="w">
+</span></code></pre></div></div>
+
+<p>And with the <code class="language-plaintext highlighter-rouge">or</code> function</p>
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">or</span><span class="w"> </span><span class="p">(</span><span class="nb">or</span><span class="w"> </span><span class="n">true</span><span class="w"> </span><span class="n">false</span><span class="p">)</span><span class="w"> </span><span class="n">false</span><span class="p">)</span><span class="w">
+</span><span class="c1">; =&gt; true</span><span class="w">
+</span></code></pre></div></div>
+<p>Is the same as</p>
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">or</span><span class="w"> </span><span class="n">true</span><span class="w"> </span><span class="p">(</span><span class="nb">or</span><span class="w"> </span><span class="n">false</span><span class="w"> </span><span class="n">false</span><span class="p">))</span><span class="w">
+</span><span class="c1">; =&gt; true</span><span class="w">
+</span></code></pre></div></div>
+
+<p><strong>Identity</strong> - Given that your function abides by the closure property, there exists some value such that when you combine it with any other value you get back the original value as if nothing happened</p>
+
+<p><code class="language-plaintext highlighter-rouge">+</code>  example:</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">+</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="mi">5</span><span class="p">)</span><span class="w">
+</span><span class="c1">; =&gt; 5</span><span class="w">
+
+</span><span class="p">(</span><span class="nb">+</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="mi">7</span><span class="p">)</span><span class="w">
+</span><span class="c1">; =&gt; 7</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Here our identity value is 0</p>
+
+<p><code class="language-plaintext highlighter-rouge">or</code>  example:</p>
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">or</span><span class="w"> </span><span class="n">true</span><span class="w"> </span><span class="n">false</span><span class="p">)</span><span class="w">
+</span><span class="c1">; =&gt; true</span><span class="w">
+
+</span><span class="p">(</span><span class="nb">or</span><span class="w"> </span><span class="n">false</span><span class="w"> </span><span class="n">false</span><span class="p">)</span><span class="w">
+</span><span class="c1">; =&gt; false</span><span class="w">
+</span></code></pre></div></div>
+<p>Here our identity value is false because given another value combined with false we get back the original value.</p>
+
+<p>To summarize, a monoid must abide by these 3 rules. And to clarify, a collection of things (or a set) AND the function make up a monoid. By definition a monoid can’t be one or the other. Here are a couple of examples of monoids: integers under addtion or strings under concatenation.</p>
+
+:ET

@@ -1,0 +1,43 @@
+I"�<p>The <code class="language-plaintext highlighter-rouge">PREPARE</code> statement is a useful and widely used statement in SQL. The way it works is it essentially creates a template of the query you would like to run. Instead of the actual values being passed in, placeholders are passed in (similar to parameters). Here’s an example</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>PREPARE insert_new_emp(text, bool) 
+AS INSERT INTO EMPLOYEES (username,admin) values($1, $2);
+</code></pre></div></div>
+
+<p>We have now prepared a statement (aliased by insert_new_emp) to insert a new user into the table <code class="language-plaintext highlighter-rouge">EMPLOYEES</code>. This does not actually insert any values into the <code class="language-plaintext highlighter-rouge">EMPLOYEES</code> table.</p>
+
+<p>We can now execute the statement like this</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>EXECUTE insert_new_emp('foo', false);
+</code></pre></div></div>
+
+<p>This has now created a new user in the <code class="language-plaintext highlighter-rouge">EMPLOYEES</code> table with the username as ‘foo’ and the admin value as false. So <code class="language-plaintext highlighter-rouge">EXECUTE</code> will execute the prepared statement and the values are now inserted into the database.</p>
+
+<p>Prepared statements have some advantages over just running a straight insert command like this</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>INSERT INTO EMPLOYEES (username,admin) values('foo', false);
+</code></pre></div></div>
+
+<p>Here are a couple of advantages:</p>
+
+<h4 id="query-optimization">Query Optimization</h4>
+
+<p>By using <code class="language-plaintext highlighter-rouge">PREPARE</code> the query is only compiled once. The query is actually sent to the SQL server when <code class="language-plaintext highlighter-rouge">PREPARE</code> is used, but the data will be sent during <code class="language-plaintext highlighter-rouge">EXECUTE</code>. This can be helpful if you are running a similar query (with different data values) numerous times because the compilation of the query will only happen once.</p>
+
+<h4 id="mitigates-against-sql-injection">Mitigates against SQL injection</h4>
+
+<p>SQL injection is when malicious SQL statements are run through your application. For example, lets say you have a web application that has a textbox input that asks the employee to enter their username. A SQL query is then run, based on what the user entered, to make sure the user exists. Lets say they enter “foo” into the textbox. The application would then run this query to make sure “foo” exists</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>SELECT * FROM EMPLOYEES WHERE username=#{value_from_username_textbox};
+</code></pre></div></div>
+
+<p>This query would not produce any harmful results, but SQL allows statements to be chained together. Like this</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>SELECT * FROM EMPLOYEES 
+WHERE username=#{value_from_username_textbox}; DROP TABLE EMPLOYEES;
+</code></pre></div></div>
+
+<p>In the textbox field a user may be able to enter “foo; DROP TABLE EMPLOYEES;” if there is no validation. These SQL commands would first find where the username is equal to the value from the textbox field and then drop the entire table <code class="language-plaintext highlighter-rouge">EMPLOYEES</code>.</p>
+
+<p>If the developer uses a prepare statement the and the user enters “foo; DROP TABLE EMPLOYEES;”. It would never be run. This is because the <code class="language-plaintext highlighter-rouge">PREPARE</code> will first send the query to the SQL server then <code class="language-plaintext highlighter-rouge">EXECUTE</code> will pass the query the data. So the query and the data are separate.</p>
+:ET

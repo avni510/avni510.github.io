@@ -1,0 +1,26 @@
+I"%<p>Threads are something used by computer programs. A single thread is responsible for a set of instructions that together perform a specific task. It controls what is executed in a specific order. A thread also allows the capability of context switching away from it and resuming it from the point where it left off. The actual execution of instructions happens in the CPU. The thread just holds the instructions for a specific task. In a single threaded application, if you want to execute 10 different tasks you have to wait for each task to finish before starting the next task. This can cause problems if one task is slowed down or blocked, the remaining tasks cannot be executed.</p>
+
+<p>Multi threading is used to avoid this issue. The idea is that the tasks can be split across multiple threads instead of one. A process or a program can potentially have many threads. For example, Microsoft Word is a multi threaded application because it runs spell check, loads keystrokes, and prints a document all at the same time. The idea behind this is if for 1 program you have 10 tasks and 5 threads then each thread executes 2 tasks and each of the 5 threads run simultaneously. These 5 threads share code, data, and files but have their own separate instruction stack.</p>
+
+<p>There are a few benefits to a multi threaded application</p>
+
+<ol>
+  <li>
+    <p>Since multiple threads are used even if one thread is blocked or slowed down the other thread can still function and continue to execute tasks. For example, an operating systems is multi threaded, so if you are running both Microsoft Word and Microsoft Excel and Microsoft Word hangs you are still able to use Microsoft Excel.</p>
+  </li>
+  <li>
+    <p>It is much faster than a single thread. Tasks can be executed simultaneously instead of waiting for each task to finish</p>
+  </li>
+  <li>
+    <p>A multi threaded application can be be split amongst multiple CPUs allowing it be even faster than running on a single CPU.</p>
+  </li>
+</ol>
+
+<p>Here’s a diagram that visually explains how the internals works</p>
+
+<p><img src="/assets/Threads.png" alt="threads" /></p>
+
+<p>The instructions for each process are split across multiple threads. There’s a layer in between the CPU called the scheduler which handles flipping feeding instructions to the CPU for execution back and forth between threads. This happens extremely fast that we don’t notice it on our computers.</p>
+
+<p>So if the scheduler is pointing to thread 2 first and grabs the first three instructions from the thread, it then feeds them to CPU. The scheduler then swaps to thread 1, grabs a few instructions from that thread and feeds them to the CPU. It then swaps back to thread 2 but picks up where it left off before swapping to thread 1 and does the same process until all the instructions are given to the CPU.</p>
+:ET

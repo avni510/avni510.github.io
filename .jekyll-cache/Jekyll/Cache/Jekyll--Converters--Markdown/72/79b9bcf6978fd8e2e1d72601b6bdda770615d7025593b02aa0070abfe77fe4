@@ -1,0 +1,12 @@
+I"Þ<p>&lt;!â€“
+Monoid is a system that statisfies these three rules</p>
+<ul>
+  <li>Monoids must satisfy these rules
+    <ul>
+      <li>closure</li>
+      <li>associativity</li>
+      <li>identity</li>
+    </ul>
+  </li>
+</ul>
+:ET

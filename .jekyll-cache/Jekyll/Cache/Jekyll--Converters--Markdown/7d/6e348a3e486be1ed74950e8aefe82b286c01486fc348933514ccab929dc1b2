@@ -1,0 +1,21 @@
+I"ñ<p>You may have seen <code class="language-plaintext highlighter-rouge">$LOAD_PATH</code> written out in Ruby programs. <code class="language-plaintext highlighter-rouge">$LOAD_PATH</code> is an array where each element in the array represents a file directory where files live. Each time you run a Ruby file <code class="language-plaintext highlighter-rouge">$LOAD_PATH</code> requires all the files in those directories even if <code class="language-plaintext highlighter-rouge">$LOAD_PATH</code> is not explicitly written out in your program. To see a list of default directories your Ruby program runs you can run <code class="language-plaintext highlighter-rouge">irb</code>, enter <code class="language-plaintext highlighter-rouge">puts $LOAD_PATH</code>. This will output a path of file directories that will be loaded upon running your ruby program. For me it outputs</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/Users/avnikothari/.rbenv/rbenv.d/exec/gem-rehash
+/Users/avnikothari/.rbenv/versions/2.2.5/lib/ruby/site_ruby/2.2.0
+/Users/avnikothari/.rbenv/versions/2.2.5/lib/ruby/site_ruby/2.2.0/x86_64-darwin16
+/Users/avnikothari/.rbenv/versions/2.2.5/lib/ruby/site_ruby
+/Users/avnikothari/.rbenv/versions/2.2.5/lib/ruby/vendor_ruby/2.2.0
+/Users/avnikothari/.rbenv/versions/2.2.5/lib/ruby/vendor_ruby/2.2.0/x86_64-darwin16
+/Users/avnikothari/.rbenv/versions/2.2.5/lib/ruby/vendor_ruby
+/Users/avnikothari/.rbenv/versions/2.2.5/lib/ruby/2.2.0
+/Users/avnikothari/.rbenv/versions/2.2.5/lib/ruby/2.2.0/x86_64-darwin16
+</code></pre></div></div>
+
+<h4 id="using-require-statements">Using Require Statements</h4>
+<p>In your Ruby file if you write <code class="language-plaintext highlighter-rouge">require time_logger</code> at the top of your file the program will go through the file directories that are each element in the <code class="language-plaintext highlighter-rouge">$LOAD_PATH</code> array and look for <code class="language-plaintext highlighter-rouge">time_logger.rb</code>. While working on my time logger application I wanted to load numerous files in another directory. I did this by adding an additional path to the <code class="language-plaintext highlighter-rouge">$LOAD_PATH</code> array. I used the File class to grab the file path for the directory I wanted to insert in <code class="language-plaintext highlighter-rouge">$LOAD_PATH</code>. At the top of my file I added</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$LOAD_PATH &lt;&lt; File.expand_path('../lib', __FILE__)
+</code></pre></div></div>
+
+<p>Iâ€™ve now included my lib directory in the <code class="language-plaintext highlighter-rouge">$LOAD_PATH</code> array. So I can use <code class="language-plaintext highlighter-rouge">require</code> statements and it will look for files in the added directory in addition to all the standard directories. One benefit of this is instead of having messy <code class="language-plaintext highlighter-rouge">require_relative</code> statements I could use clean and easy to read <code class="language-plaintext highlighter-rouge">require</code> statements. The other benefit is that if you move files and add directories in the <code class="language-plaintext highlighter-rouge">/lib</code> folder you no longer have to change your path because <code class="language-plaintext highlighter-rouge">$LOAD_PATH</code> will look through everything in your <code class="language-plaintext highlighter-rouge">/lib</code> folder.</p>
+:ET

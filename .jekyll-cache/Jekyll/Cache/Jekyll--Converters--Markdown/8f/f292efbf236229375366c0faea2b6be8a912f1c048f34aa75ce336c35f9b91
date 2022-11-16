@@ -1,0 +1,71 @@
+I"s<p>Lazy sequences are powerful tools in Clojure. But before we dive further into lazy sequences I want to briefly go over the differences between a collection and sequence in Clojure.</p>
+
+<h4 id="collections"><strong>Collections</strong></h4>
+<ul>
+  <li>Types of collections: vector, list, hash-map</li>
+  <li>Immutable</li>
+  <li>Functions that can be used on them: count, conj, seq, first rest, cons</li>
+  <li>Cannot be infinite</li>
+</ul>
+
+<h4 id="sequences"><strong>Sequences</strong></h4>
+<ul>
+  <li>A walkable list abstraction for collections and can be sequentially traversed</li>
+  <li>Immutable</li>
+  <li>Functions that can be used on them:  first, rest, cons</li>
+  <li>Can be infinite</li>
+</ul>
+
+<p>Sequences can be evaluated “lazily”. And here’s a few examples of functions that return lazy sequences.</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">take</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="p">(</span><span class="nb">range</span><span class="p">))</span><span class="w">
+</span><span class="c1">; =&gt; (0 1 2 3 4)</span><span class="w">
+</span><span class="p">(</span><span class="nb">class</span><span class="w"> </span><span class="p">(</span><span class="nb">take</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="p">(</span><span class="nb">range</span><span class="p">)))</span><span class="w">
+</span><span class="c1">; =&gt; clojure.lang.LazySeq</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="nb">inc</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="mi">4</span><span class="p">])</span><span class="w">
+</span><span class="c1">; =&gt; (2 3 4 5)</span><span class="w">
+</span><span class="p">(</span><span class="nb">class</span><span class="w"> </span><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="nb">inc</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="mi">4</span><span class="p">]))</span><span class="w">
+</span><span class="c1">; =&gt;clojure.lang.LazySeq</span><span class="w">
+</span></code></pre></div></div>
+
+<p>The first line of each of the code examples above call a function that return lazy sequences. The second call verifies that these functions do in fact return lazy sequences.</p>
+
+<p>Lazy sequences are a data structure and they are a specific type of sequences. The values of a lazy sequence are produced on an as needed basis. The clojure docs state that the “sequence elements are not avaialable ahead of time. [Instead they are] produced as the result of a computation.” The neat thing about lazy sequences is that they can be infinite for example in the first code example <code class="language-plaintext highlighter-rouge">range</code> without a default value specifies the default value to be infinity.</p>
+
+<p>We can also define our own lazy sequence in Clojure</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">multiply-2</span><span class="w"> </span><span class="p">[</span><span class="n">lazysequence</span><span class="p">]</span><span class="w">
+  </span><span class="p">(</span><span class="nf">lazy-seq</span><span class="w"> </span><span class="p">(</span><span class="nb">cons</span><span class="w"> </span><span class="p">(</span><span class="nb">*</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="p">(</span><span class="nb">first</span><span class="w"> </span><span class="n">lazysequence</span><span class="p">))</span><span class="w"> </span><span class="p">(</span><span class="nf">multiply-2</span><span class="w"> </span><span class="p">(</span><span class="nb">rest</span><span class="w"> </span><span class="n">lazysequence</span><span class="p">)))))</span><span class="w">
+</span></code></pre></div></div>
+
+<p>The example above is a recursive function that generates a new lazy sequence with every value from the original lazy sequence multiplied by two. It does this by taking the first element of the original lazy sequence and multiplying it by 2. It then calls back <code class="language-plaintext highlighter-rouge">multiply-2</code> on the remaining elements in the original lazy sequence.</p>
+
+<p>To generate all the positive whole numbers mulitplied by 2 we can run <code class="language-plaintext highlighter-rouge">(multiply-2(range))</code> although this will cause the repl to crash. But the internals of how it is evaluated look something like this</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">multiply-2</span><span class="w"> </span><span class="p">(</span><span class="nb">range</span><span class="p">))</span><span class="w">
+
+</span><span class="c1">; below (rest range) is equal to all of the postive numbers excluded 0</span><span class="w">
+</span><span class="c1">; (lazy-seq (cons (* 2 0)) (multiply-2 (rest range))) </span><span class="w">
+</span><span class="c1">;                                   ↓</span><span class="w">
+</span><span class="c1">;</span><span class="w">
+</span><span class="c1">;        below (rest range) is equal to all of the postive numbers excluded 0 and 1</span><span class="w">
+</span><span class="c1">;                          (lazy-seq (cons (* 2 1)) (mulitply-2 (rest range))) </span><span class="w">
+</span><span class="c1">;                                                             ↓</span><span class="w">
+</span><span class="c1">;</span><span class="w">
+</span><span class="c1">;                         below (rest range) is equal to all of the postive numbers excluded 0 and 2</span><span class="w">
+</span><span class="c1">;                                                   (lazy-seq (cons (* 2 2)) (mulitply-2 (rest range))) </span><span class="w">
+</span><span class="c1">;                                                                                       ↓</span><span class="w">
+</span><span class="c1">;                                                                                 on to infinity </span><span class="w">
+
+</span></code></pre></div></div>
+<p>We can then <code class="language-plaintext highlighter-rouge">take</code> the first 5 elements of the infinite lazy sequence <code class="language-plaintext highlighter-rouge">(multiply-2(range))</code>.</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">take</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="p">(</span><span class="nf">multiply-2</span><span class="w"> </span><span class="p">(</span><span class="nb">range</span><span class="p">)))</span><span class="w">
+</span><span class="c1">; (0 2 4 6 8)</span><span class="w">
+</span><span class="p">(</span><span class="nb">class</span><span class="w"> </span><span class="p">(</span><span class="nb">take</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="p">(</span><span class="nf">multiply-2</span><span class="w"> </span><span class="p">(</span><span class="nb">range</span><span class="p">))))</span><span class="w">
+</span><span class="c1">; clojure.lang.LazySeq</span><span class="w">
+</span></code></pre></div></div>
+
+:ET

@@ -1,0 +1,85 @@
+I"�,<p>A few weeks back I had a <a href="http://avni510.github.io/middleware/2017/05/19/what-is-middleware.html">blogpost</a> that briefly defines middleware. For this post I wanted to go a bit further into middleware, how I used it, and different ways it can be used.</p>
+
+<h3 id="how-i-used-it">How I Used It</h3>
+
+<p>I used middleware for returning the appropriate <code class="language-plaintext highlighter-rouge">Handler</code>. A class that implements the <code class="language-plaintext highlighter-rouge">Middleware</code> interface has a <code class="language-plaintext highlighter-rouge">call</code> method on it and takes in a <code class="language-plaintext highlighter-rouge">Request</code> and returns a <code class="language-plaintext highlighter-rouge">Handler</code>. I created a stack like structure to find the <code class="language-plaintext highlighter-rouge">Handler</code> for a specific route.</p>
+
+<p>The first class on the stack is called <code class="language-plaintext highlighter-rouge">RoutingMiddleware</code> and that finds a routes that matches with what was initially populated in my <code class="language-plaintext highlighter-rouge">ConfigurationRoutes</code> class (which is invoked in <code class="language-plaintext highlighter-rouge">Main</code>). If it does not find that route it passes the request onto to the next class called <code class="language-plaintext highlighter-rouge">FileMiddleware</code> which looks to see if the request route matches a file in the specified directory. If it does not find the route it passes the request onto to the next class called <code class="language-plaintext highlighter-rouge">FinalMiddleware</code> which returns a 404 Not Found error.</p>
+
+<p>A benefit of this pattern is that the Middlewares can be shuffled around if new requirements arise. Another advantage is you can add additional logic if need be - ex: having a middleware that checks if the user is authenticated and returning a “404 Not Found” if they are not or continuing down the chain if they are authenticated. It also allows for an easy separation of responsibilities. For example, my <code class="language-plaintext highlighter-rouge">FileMiddleware</code> lazily loads the file routes if a request is made to a file that exists in the directory. All the files are not prepopulated when I initially add all my routes at the top level.</p>
+
+<p>Here’s an example from my server where I use Middleware:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Middleware</span> <span class="o">{</span>
+  <span class="nc">Handler</span> <span class="nf">call</span><span class="o">(</span><span class="nc">Request</span> <span class="n">request</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span><span class="o">;</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">RoutingMiddleware</span> <span class="kd">implements</span> <span class="nc">Middleware</span> <span class="o">{</span>
+  <span class="kd">private</span> <span class="nc">Middleware</span> <span class="n">app</span><span class="o">;</span>
+  <span class="kd">private</span> <span class="nc">Router</span> <span class="n">router</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="nf">RoutingMiddleware</span><span class="o">(</span><span class="nc">Router</span> <span class="n">router</span><span class="o">,</span> <span class="nc">Middleware</span> <span class="n">app</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">router</span> <span class="o">=</span> <span class="n">router</span><span class="o">;</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">app</span> <span class="o">=</span> <span class="n">app</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="nc">Handler</span> <span class="nf">call</span><span class="o">(</span><span class="nc">Request</span> <span class="n">request</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+    <span class="nc">Handler</span> <span class="n">handler</span> <span class="o">=</span> <span class="n">router</span><span class="o">.</span><span class="na">retrieveHandler</span><span class="o">(</span><span class="n">request</span><span class="o">.</span><span class="na">getRequestMethod</span><span class="o">(),</span> <span class="n">request</span><span class="o">.</span><span class="na">getUri</span><span class="o">());</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">handler</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="n">handler</span><span class="o">;</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="n">app</span><span class="o">.</span><span class="na">call</span><span class="o">(</span><span class="n">request</span><span class="o">);</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Here the next middleware is injected into <code class="language-plaintext highlighter-rouge">RoutingMiddleware</code> and is called if the handler was not found in the initial routes that were populated (<code class="language-plaintext highlighter-rouge">retrieveHandler</code> does this).</p>
+
+<h3 id="clojure-ring-middleware">Clojure Ring Middleware</h3>
+
+<p>There are also other ways to use middleware. For example, Clojure Ring implements middleware. They have each handler take in a request and return a response, the response only contains 3 parts - status, headers, and body.</p>
+
+<p>Here’s an example from their <a href="https://github.com/ring-clojure/ring/wiki/Concepts">wiki</a></p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">what-is-my-ip</span><span class="w"> </span><span class="p">[</span><span class="n">request</span><span class="p">]</span><span class="w">
+  </span><span class="p">{</span><span class="no">:status</span><span class="w"> </span><span class="mi">200</span><span class="w">
+   </span><span class="no">:headers</span><span class="w"> </span><span class="p">{</span><span class="s">"Content-Type"</span><span class="w"> </span><span class="s">"text/plain"</span><span class="p">}</span><span class="w">
+   </span><span class="no">:body</span><span class="w"> </span><span class="p">(</span><span class="no">:remote-addr</span><span class="w"> </span><span class="n">request</span><span class="p">)})</span><span class="w">
+</span></code></pre></div></div>
+
+<p>The middleware is in charge of adding additional functionality to a handler. They help build up a handler. The first argument must be a handler. They return a new handler function that calls the original handler and adds some logic to the response returned by the original handler.</p>
+
+<p>Here’s another example from their wiki</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">wrap-content-type</span><span class="w"> </span><span class="p">[</span><span class="n">handler</span><span class="w"> </span><span class="n">content-type</span><span class="p">]</span><span class="w">
+  </span><span class="p">(</span><span class="k">fn</span><span class="w"> </span><span class="p">[</span><span class="n">request</span><span class="p">]</span><span class="w">
+    </span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[</span><span class="n">response</span><span class="w"> </span><span class="p">(</span><span class="nf">handler</span><span class="w"> </span><span class="n">request</span><span class="p">)]</span><span class="w">
+      </span><span class="p">(</span><span class="nf">assoc-in</span><span class="w"> </span><span class="n">response</span><span class="w"> </span><span class="p">[</span><span class="no">:headers</span><span class="w"> </span><span class="s">"Content-Type"</span><span class="p">]</span><span class="w"> </span><span class="n">content-type</span><span class="p">))))</span><span class="w">
+</span></code></pre></div></div>
+
+<p>In the example above, all responses are returned with the header set to the content type passed into <code class="language-plaintext highlighter-rouge">wrap-content-type</code> (ex: “text/html”) for the specific handler passed into the function (ex: <code class="language-plaintext highlighter-rouge">what-is-my-ip</code>). The function then takes in a request and returns a response.</p>
+
+<p>Here’s an example of how it’s used.</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">request</span><span class="w"> 
+  </span><span class="p">{</span><span class="no">:request-method</span><span class="w"> </span><span class="no">:get</span><span class="w">
+   </span><span class="no">:uri</span><span class="w"> </span><span class="s">"/"</span><span class="w">
+   </span><span class="no">:headers</span><span class="w"> </span><span class="p">{</span><span class="s">"Host"</span><span class="w"> </span><span class="s">"localhost"</span><span class="p">}})</span><span class="w">
+
+</span><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">new-handler</span><span class="w">
+    </span><span class="p">(</span><span class="nf">wrap-content-type</span><span class="w"> </span><span class="n">what-is-my-ip</span><span class="w"> </span><span class="s">"text/html"</span><span class="p">))</span><span class="w">
+
+</span><span class="p">(</span><span class="nf">new-handler</span><span class="w"> </span><span class="n">request</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>This returns a response that looks like this</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w">  </span><span class="p">{</span><span class="no">:status</span><span class="w"> </span><span class="mi">200</span><span class="w">
+   </span><span class="no">:headers</span><span class="w"> </span><span class="p">{</span><span class="s">"Content-Type"</span><span class="w"> </span><span class="s">"text/html"</span><span class="p">}</span><span class="w">
+   </span><span class="no">:body</span><span class="w"> </span><span class="p">(</span><span class="no">:remote-addr</span><span class="w"> </span><span class="n">request</span><span class="p">)})</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Although this example is quite contrived it shows a different way in which middleware can be used. Overall, I found it interesting to read about how Clojure Ring used middleware and comparing it to my server project.</p>
+
+:ET

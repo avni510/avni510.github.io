@@ -1,0 +1,11 @@
+I"�<p>&lt;!–Socket</p>
+<ul>
+  <li>one end point of a two-way communication</li>
+  <li>combination of IP address and a port</li>
+  <li>TCP connection is defined as two sockets</li>
+  <li>used to send data to one computer’s software</li>
+  <li>socket is bound to a port number</li>
+  <li>server listens to socket for a client to make a connection request</li>
+  <li>on client-side - the socket is used to communicate with the server</li>
+</ul>
+:ET

@@ -1,0 +1,58 @@
+I"�<!--
+* streams with try/ catch blocks? importance? 
+* java try with resources? 
+* try/ catch blocks for working with streams? 
+-->
+
+<p>Java defines input and output in terms of streams. An input stream is a class that reads data and an output stream is a class that writes data. Streams are used for many different purposes. For example, to read data from a file you can use <code class="language-plaintext highlighter-rouge">java.io.FileInputStream</code>. In terms of networking, streams can be used to send data (output stream) or receive data (input stream). There are two main abstract classes that are used in Java the first is called an OutputStream which has a <code class="language-plaintext highlighter-rouge">write()</code> method and the second is an InputStream which has a <code class="language-plaintext highlighter-rouge">read()</code> method. All output and input streams implement these interfaces, meaning they contain the same behavior.</p>
+
+<p>The InputStream and OutputStream read and write bytes respectively. Generally, one byte at a time isn’t sent over the network because it’s a costly operation. Instead, a group of bytes is sent over. When reading and writing data it is usually stored in a buffer. Bytes are accumulated in memory and are sent over to their destination when a certain amount of bytes have been accumulated or a certain amount of time has passed. This can cause frustrations because if you’re a client and sent a request to a server, the server may have processed that request but if the buffer is not full no data is received by the client. The flush method can be used to avoid this. It can be used when you’re done writing out data. It forces the buffered stream to send its data.</p>
+
+<p>Since InputStream and OutputStream operate on a bytes level there are streams that allow you to translate bytes into a different format ex: ASCII values. These are called filter streams. For example, InputStreamReader reads bytes and converts them into characters. It is a wrapper around an InputStream. And the BufferedReader class optimizes the data sent through this stream.</p>
+
+<p>Here’s a simple Java program that returns “hello world” to a GET request to “/”</p>
+
+<p>I’ve commented each line to clarify the purpose of each line. This program also prints to the console the specifics of each HTTP request to the server.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">java.net.*</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.io.*</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">HTTPServer</span> <span class="o">{</span>
+
+  <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span> <span class="n">args</span><span class="o">[])</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+    <span class="nc">ServerSocket</span> <span class="n">serverSocket</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ServerSocket</span><span class="o">(</span><span class="mi">4444</span><span class="o">);</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Listening for connection on port 4444"</span><span class="o">);</span>
+    <span class="k">while</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">try</span> <span class="o">(</span>
+          <span class="c1">// returns a new socket that is connected to the client</span>
+          <span class="nc">Socket</span> <span class="n">clientSocket</span> <span class="o">=</span> <span class="n">serverSocket</span><span class="o">.</span><span class="na">accept</span><span class="o">();</span>
+          <span class="c1">// creates the server's output stream has a write method which reads in bytes</span>
+          <span class="nc">OutputStream</span> <span class="n">outputStream</span> <span class="o">=</span> <span class="n">clientSocket</span><span class="o">.</span><span class="na">getOutputStream</span><span class="o">();</span>
+          <span class="c1">// creates the server's input stream has a read method which reads in bytes</span>
+          <span class="nc">InputStream</span> <span class="n">inputStream</span> <span class="o">=</span> <span class="n">clientSocket</span><span class="o">.</span><span class="na">getInputStream</span><span class="o">()</span>
+
+      <span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// InputStreamReader - converts bytes to character using a default character set implemented in InputStreamReader</span>
+        <span class="c1">// BufferedReader - stores data written to the buffer until the stream is full or flushed</span>
+        <span class="nc">BufferedReader</span> <span class="n">in</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">BufferedReader</span><span class="o">(</span><span class="k">new</span> <span class="nc">InputStreamReader</span><span class="o">(</span><span class="n">inputStream</span><span class="o">));</span>
+
+        <span class="c1">// loops through all the received data and prints it to the console</span>
+        <span class="nc">String</span> <span class="n">line</span> <span class="o">=</span> <span class="n">in</span><span class="o">.</span><span class="na">readLine</span><span class="o">();</span>
+        <span class="k">while</span> <span class="o">(!</span><span class="n">line</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+          <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">line</span><span class="o">);</span>
+          <span class="n">line</span> <span class="o">=</span> <span class="n">in</span><span class="o">.</span><span class="na">readLine</span><span class="o">();</span>
+        <span class="o">}</span>
+
+        <span class="c1">// string which contains the message to send to client</span>
+        <span class="nc">String</span> <span class="n">httpResponse</span> <span class="o">=</span> <span class="s">"HTTP/1.1 200 OK\r\n\r\n"</span> <span class="o">+</span> <span class="s">"hello world"</span><span class="o">;</span>
+        <span class="c1">// writes out message in bytes</span>
+        <span class="n">outputStream</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">httpResponse</span><span class="o">.</span><span class="na">getBytes</span><span class="o">(</span><span class="s">"UTF-8"</span><span class="o">));</span>
+      <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">IOException</span> <span class="n">ex</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">err</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">ex</span><span class="o">.</span><span class="na">getMessage</span><span class="o">());</span>
+      <span class="o">}</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+:ET

@@ -1,0 +1,84 @@
+I"ö<p>For my next assignment with the time logger application I have been exploring and learning about Rake. Rake is a build language and it is also a Domain Specific Language (DSL). It executes <code class="language-plaintext highlighter-rouge">tasks</code> in a dependency way (ex: do this first then that). One way to use it is when you need setup for your program before running it. For example, in my assignment I need to create a database table and schema before the user can start using the program. This way when they log their time, data will be saved in a Postgresql database. The unique part about Rake is the fact that Ruby code can be written directly in a Rakefile. This differs significantly from other build languages. To use it on your project you must install the rake gem.</p>
+
+<p>Hereâ€™s an example. Lets say you want to cook a recipe. Recipes have specific instructions that must be followed in order.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">task</span> <span class="ss">:gather_vegetables</span> <span class="k">do</span>
+ <span class="nb">puts</span> <span class="s2">"I took out the vegetables from my refrigerator"</span>  
+<span class="k">end</span>
+
+<span class="n">task</span> <span class="ss">:cut_vegetables</span> <span class="o">=&gt;</span> <span class="ss">:gather_vegetables</span> <span class="k">do</span>
+  <span class="nb">puts</span> <span class="s2">"I cut the vegetables"</span>
+<span class="k">end</span>
+
+<span class="n">task</span> <span class="ss">:cook_vegetables</span> <span class="o">=&gt;</span> <span class="ss">:cut_vegetables</span> <span class="k">do</span>
+  <span class="nb">puts</span> <span class="s2">"I sauteed the veggies"</span> 
+<span class="k">end</span>
+
+<span class="n">task</span> <span class="ss">:mix_sauces</span> <span class="o">=&gt;</span> <span class="ss">:cook_vegetables</span> <span class="k">do</span>
+  <span class="nb">puts</span> <span class="s2">"I mixed in the sauce"</span>
+<span class="k">end</span>
+
+<span class="n">task</span> <span class="ss">:cook_food</span> <span class="o">=&gt;</span> <span class="ss">:mix_sauces</span> <span class="k">do</span>
+  <span class="nb">puts</span> <span class="s2">"the meal is ready"</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>You can run a Rakefile through the command line by running <code class="language-plaintext highlighter-rouge">rake &lt;task_name&gt;</code></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>avnikothari@Avnis-MacBook-Air:~$ rake cook_food
+I took out the vegetables from my refridgeator
+I cut the vegetables
+I sauted the veggies
+I mixed in the sauce
+the meal is ready
+</code></pre></div></div>
+<p><code class="language-plaintext highlighter-rouge">task</code> specifies that we want it to execute the part inside the <code class="language-plaintext highlighter-rouge">do</code> and <code class="language-plaintext highlighter-rouge">end</code> blocks. The symbol <code class="language-plaintext highlighter-rouge">=&gt;</code> denotes the fact that there is a depedency on that specfic task. So it will not execute that task before executing the dependency, and multiple dependencies can be written in square brackets like this</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">task</span> <span class="ss">:gather_vegetables</span> <span class="k">do</span>
+ <span class="nb">puts</span> <span class="s2">"I took out the vegetables from my refrigerator"</span>  
+<span class="k">end</span>
+
+<span class="n">task</span> <span class="ss">:cut_vegetables</span> <span class="k">do</span>
+  <span class="nb">puts</span> <span class="s2">"I cut the vegetables"</span>
+<span class="k">end</span>
+
+<span class="n">task</span> <span class="ss">:cook_vegetables</span> <span class="k">do</span>
+  <span class="nb">puts</span> <span class="s2">"I sauteed the veggies"</span> 
+<span class="k">end</span>
+
+<span class="n">task</span> <span class="ss">:mix_sauces</span> <span class="k">do</span>
+  <span class="nb">puts</span> <span class="s2">"I mixed in the sauce"</span>
+<span class="k">end</span>
+
+<span class="n">task</span> <span class="ss">:cook_food</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="ss">:gather_vegetables</span><span class="p">,</span> <span class="ss">:cut_vegetables</span><span class="p">,</span> <span class="ss">:cook_vegetables</span><span class="p">,</span> <span class="ss">:mix_sauces</span><span class="p">]</span> <span class="k">do</span>
+  <span class="nb">puts</span> <span class="s2">"the meal is ready"</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>When we run <code class="language-plaintext highlighter-rouge">rake cook_food</code> we will receive the same output as above.</p>
+
+<p>Rake tasks can also be namespaced for organizational purposes. Like this</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">namespace</span> <span class="ss">:recipe</span>
+  <span class="n">task</span> <span class="ss">:gather_vegetables</span> <span class="k">do</span>
+   <span class="nb">puts</span> <span class="s2">"I took out the vegetables from my refrigerator"</span>  
+  <span class="k">end</span>
+
+  <span class="n">task</span> <span class="ss">:cut_vegetables</span> <span class="k">do</span>
+    <span class="nb">puts</span> <span class="s2">"I cut the vegetables"</span>
+  <span class="k">end</span>
+
+  <span class="n">task</span> <span class="ss">:cook_vegetables</span> <span class="k">do</span>
+    <span class="nb">puts</span> <span class="s2">"I sauteed the veggies"</span> 
+  <span class="k">end</span>
+
+  <span class="n">task</span> <span class="ss">:mix_sauces</span> <span class="k">do</span>
+    <span class="nb">puts</span> <span class="s2">"I mixed in the sauce"</span>
+  <span class="k">end</span>
+
+  <span class="n">task</span> <span class="ss">:cook_food</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="ss">:gather_vegetables</span><span class="p">,</span> <span class="ss">:cut_vegetables</span><span class="p">,</span> <span class="ss">:cook_vegetables</span><span class="p">,</span> <span class="ss">:mix_sauces</span><span class="p">]</span> <span class="k">do</span>
+    <span class="nb">puts</span> <span class="s2">"the meal is ready"</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>We would then run <code class="language-plaintext highlighter-rouge">rake recipe::cook_food</code> to have to same output as above.</p>
+
+:ET

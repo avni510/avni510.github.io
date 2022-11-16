@@ -1,0 +1,2 @@
+I"«<p>Today I watched the <a href="https://www.youtube.com/watch?v=OMPfEXIlTVE">Nothing is Something</a> talk by Sandi Metz. During the first half of her talk she goes into the Null Object Pattern. This pattern specifically handles how to deal with nil or null values in your program. When over looked they can cause majors errors in your code and should be handled carefully. Hereâ€™s an example when nil can cause a problem</p>
+:ET

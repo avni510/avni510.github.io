@@ -1,0 +1,37 @@
+I"<p>Symbols in Clojure are frequently used. Clojure.org states that symbols are used to “refer to function parameters, let bindings, class names, and global vars”. Essentially symbols are a piece of data. Symbols are not storage locations, but instead they are used to refer to the value of a variable. It can also be said that symbols are used as identifiers within the language.</p>
+
+<p>Here are a few examples of symbols:</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">get-board</span><span class="w"> </span><span class="p">[</span><span class="n">board-vector</span><span class="p">]</span><span class="w">
+  </span><span class="n">board-vector</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">board-vector</code> is a symbol and it refers to the value passed into the function <code class="language-plaintext highlighter-rouge">get-board</code></p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[</span><span class="n">x</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="p">(</span><span class="nb">println</span><span class="w"> </span><span class="n">x</span><span class="p">))</span><span class="w">
+</span><span class="c1">; =&gt; 1</span><span class="w">
+</span></code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">x</code> is a symbol that is bound to the value of 1 inside the let statement.</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">person</span><span class="w"> </span><span class="p">{</span><span class="no">:name</span><span class="w"> </span><span class="s">"avni"</span><span class="w"> </span><span class="no">:age</span><span class="w"> </span><span class="mi">23</span><span class="p">})</span><span class="w">
+</span><span class="c1">; =&gt; user/person</span><span class="w">
+</span><span class="n">person</span><span class="w">
+</span><span class="c1">; =&gt; {:name "avni", :age 23}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>The first line denotes a global var, person, which was created in the user namespace. The next call, <code class="language-plaintext highlighter-rouge">person</code>, is a symbol that refers to the global var <code class="language-plaintext highlighter-rouge">person</code> which is a hash-map.</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">*</span><span class="w"> </span><span class="mi">8</span><span class="w"> </span><span class="mi">10</span><span class="p">)</span><span class="w">
+</span><span class="c1">; =&gt; 80</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Here <code class="language-plaintext highlighter-rouge">*</code> is a symbol that refers to the function <code class="language-plaintext highlighter-rouge">*</code>.</p>
+
+<p>You can stop the evaluation of symbols but using a quote before them like this</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="ss">'hello_world</span><span class="w">
+</span><span class="n">=&gt;</span><span class="w"> </span><span class="n">hello_world</span><span class="w">
+</span></code></pre></div></div>
+<p>Symbols are scattered throughout the Clojure language and are reference points to pieces of data.</p>
+:ET

@@ -1,0 +1,231 @@
+I"—<<p>Monads allow you to chain together operations in your program without any unintended consequences. And they are a functional design pattern that are widely used and some languages even force you into using them like Haskell. I hope to build upon the definition of a monad as the post goes on.</p>
+
+<p>An analogy from the wikipedia, states they are something like an assembly line where the conveyor belts transports data between functional units and they are transformed one step at a time. During this process, the conveyor belt does not stop.</p>
+
+<p>I like to think of them as a type with a wrapped value inside it. For example, a list can have data inside of it and that can be thought of as the value or it can be an empty list with no data, but the type is still a list. Some languages, like Java 8, have the built in Optional type. There is data inside the optional like an integer or string or it could be empty with no data inside it. And the type is still an optional. Both Lists and Optionals are Monads.</p>
+
+<p>Monads have a bind function that allows them to continue being transported down the assembly line. The bind function must abide by this definition</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ma X (a -&gt; mb) -&gt; mb
+</code></pre></div></div>
+
+<p>Where <code class="language-plaintext highlighter-rouge">ma</code> is a wrapped value and <code class="language-plaintext highlighter-rouge">a</code> defines the type of the value inside the wrapped object. For example, the list <code class="language-plaintext highlighter-rouge">[1, 2, 3]</code> <code class="language-plaintext highlighter-rouge">m</code> is a list (the type of the wrapper) and <code class="language-plaintext highlighter-rouge">a</code> is an integer (the type of the data inside the wrapped object)</p>
+
+<p>So the bind function takes a wrapped object of type <code class="language-plaintext highlighter-rouge">a</code> and a function and converts it to a wrapped object of type <code class="language-plaintext highlighter-rouge">b</code>.</p>
+
+<p>I want to slowly start introducing an example of Monads that Emmanuel and I started writing in Ruby. We wrote an IO example, the purpose of this small program is to be able to go through the IO process without having the program crash. We first defined an object that is like a wrapper to our data.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MIO</span>
+  <span class="nb">attr_reader</span> <span class="ss">:value</span>
+
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="vi">@value</span> <span class="o">=</span> <span class="n">value</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">empty?</span>
+    <span class="n">value</span><span class="p">.</span><span class="nf">nil?</span>
+  <span class="k">end</span>
+
+  <span class="k">class</span> <span class="o">&lt;&lt;</span> <span class="nb">self</span>
+    <span class="k">def</span> <span class="nf">new_empty</span>
+      <span class="nb">self</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="kp">nil</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>This way we wrap our data in the <code class="language-plaintext highlighter-rouge">MIO</code> object. For example, <code class="language-plaintext highlighter-rouge">monad_io = MIO.new(5)</code> and to declare an empty one <code class="language-plaintext highlighter-rouge">monad_io = MIO.new_empty</code>. So if we call <code class="language-plaintext highlighter-rouge">monad_io.empty?</code> we get a boolean back as to if there is data in the MIO object or not.</p>
+
+<p>Next, we define functions that perform IO operations. They are defined as lambdas and can be invoked with <code class="language-plaintext highlighter-rouge">.call()</code>. For example, <code class="language-plaintext highlighter-rouge">get_line.call()</code></p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MIO</span>
+  <span class="nb">attr_reader</span> <span class="ss">:value</span>
+
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="vi">@value</span> <span class="o">=</span> <span class="n">value</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">empty?</span>
+    <span class="n">value</span><span class="p">.</span><span class="nf">nil?</span>
+  <span class="k">end</span>
+
+  <span class="k">class</span> <span class="o">&lt;&lt;</span> <span class="nb">self</span>
+
+    <span class="k">def</span> <span class="nf">new_empty</span>
+      <span class="nb">self</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="kp">nil</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">get_line</span>
+      <span class="vc">@@get_line</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">get_contents</span>
+      <span class="vc">@@get_contents</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">puts_str</span>
+      <span class="vc">@@puts_str</span>
+    <span class="k">end</span>
+
+    <span class="vc">@@get_line</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="p">{</span>
+      <span class="n">user_input</span> <span class="o">=</span> <span class="nb">gets</span><span class="p">.</span><span class="nf">chomp</span>
+      <span class="no">MIO</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">user_input</span><span class="p">)</span> <span class="p">}</span>
+
+    <span class="vc">@@get_contents</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="p">{</span> <span class="o">|</span><span class="n">filename</span><span class="o">|</span>
+      <span class="k">begin</span>
+        <span class="n">file</span> <span class="o">=</span> <span class="no">File</span><span class="p">.</span><span class="nf">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">f1</span><span class="o">|</span>
+          <span class="n">contents</span> <span class="o">=</span> <span class="no">IO</span><span class="p">.</span><span class="nf">read</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+          <span class="n">contents</span><span class="p">.</span><span class="nf">nil?</span> <span class="p">?</span> <span class="no">MIO</span><span class="p">.</span><span class="nf">new_empty</span> <span class="p">:</span> <span class="no">MIO</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span>
+        <span class="k">end</span>
+      <span class="k">rescue</span> <span class="no">Exception</span>
+        <span class="no">MIO</span><span class="p">.</span><span class="nf">new_empty</span>
+      <span class="k">end</span>
+    <span class="p">}</span>
+
+    <span class="vc">@@puts_str</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="p">{</span> <span class="o">|</span><span class="n">contents</span><span class="o">|</span>
+      <span class="nb">puts</span> <span class="n">contents</span>
+      <span class="no">MIO</span><span class="p">.</span><span class="nf">new_empty</span>
+    <span class="p">}</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Since they are lambdas the function signature is not so clear. But they take a value (not the wrapped value) and perform some sort of IO operation on them. They return an empty <code class="language-plaintext highlighter-rouge">MIO</code> object if the operation is a failure and a <code class="language-plaintext highlighter-rouge">MIO</code> object with a value if the operation was sucessuful. Now all we need is a bind that glues everything together - it takes a wrapped object and a function and returns a new wrapped object.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MIO</span>
+  <span class="nb">attr_reader</span> <span class="ss">:value</span>
+
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="vi">@value</span> <span class="o">=</span> <span class="n">value</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">empty?</span>
+    <span class="n">value</span><span class="p">.</span><span class="nf">nil?</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="n">function</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">self</span><span class="p">.</span><span class="nf">empty?</span>
+      <span class="no">MIO</span><span class="p">.</span><span class="nf">new_empty</span>
+    <span class="k">else</span>
+      <span class="n">function</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="nf">value</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">class</span> <span class="o">&lt;&lt;</span> <span class="nb">self</span>
+
+    <span class="k">def</span> <span class="nf">get_line</span>
+      <span class="vc">@@get_line</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">get_contents</span>
+      <span class="vc">@@get_contents</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">puts_str</span>
+      <span class="vc">@@puts_str</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">new_empty</span>
+      <span class="nb">self</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="kp">nil</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="vc">@@get_line</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="p">{</span>
+      <span class="n">user_input</span> <span class="o">=</span> <span class="no">FakeIO</span><span class="p">.</span><span class="nf">gets</span>
+      <span class="no">MIO</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">user_input</span><span class="p">)</span> <span class="p">}</span>
+
+    <span class="vc">@@get_contents</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="p">{</span> <span class="o">|</span><span class="n">filename</span><span class="o">|</span>
+      <span class="k">begin</span>
+        <span class="n">file</span> <span class="o">=</span> <span class="no">File</span><span class="p">.</span><span class="nf">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">f1</span><span class="o">|</span>
+          <span class="n">contents</span> <span class="o">=</span> <span class="no">IO</span><span class="p">.</span><span class="nf">read</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+          <span class="n">contents</span><span class="p">.</span><span class="nf">nil?</span> <span class="p">?</span> <span class="no">MIO</span><span class="p">.</span><span class="nf">new_empty</span> <span class="p">:</span> <span class="no">MIO</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span>
+        <span class="k">end</span>
+      <span class="k">rescue</span> <span class="no">Exception</span>
+        <span class="no">MIO</span><span class="p">.</span><span class="nf">new_empty</span>
+      <span class="k">end</span>
+    <span class="p">}</span>
+
+    <span class="vc">@@puts_str</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="p">{</span> <span class="o">|</span><span class="n">contents</span><span class="o">|</span>
+      <span class="nb">puts</span> <span class="n">contents</span>
+      <span class="no">MIO</span><span class="p">.</span><span class="nf">new_empty</span>
+    <span class="p">}</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>In this implementation of bind, it operates on an instance of <code class="language-plaintext highlighter-rouge">MIO</code> so it only needs the function passed in. Now we can do chain together functions like this</p>
+
+<p><code class="language-plaintext highlighter-rouge">monad_io = MIO.get_line.call()
+            .bind(MIO.get_contents)
+            .bind(MIO.puts_str)</code></p>
+
+<p>The big advantage is that our whole program will run no matter what the inputs are for each function if they exist or not. For example, if the user does not enter a valid file name in <code class="language-plaintext highlighter-rouge">get_line</code> the rest of the functions are still able to operate, the program never crashes. Additionally, this pattern allows for consistency in our program. As you can see each <code class="language-plaintext highlighter-rouge">IO</code> function is crafted in a similar manner.</p>
+
+<!---
+In math notation m has to have these 3 functions defined on it: 
+1. `return : a -> m a`
+
+public Optional<Integer> return(int number){
+  return new Optional<Integer>(number);
+}
+
+
+2. fmap : (a -> b) X m a -> m b (this is a functor) 
+
+f: (a -> m b)
+g: (b -> m c)
+
+Integer a = 5;
+String b = "5";
+Optional ma = new Optional<Integer>(5);
+Optional mb = new Optional<String>("5");
+
+function that operates over wrapped values 
+
+public String func(Integer int){
+  return String.valueof(int);
+}
+
+Optional optionalfive = new Optional<Integer>(5)
+
+fmap(func(5), optionalfive)
+
+public Optional<String> fmap(function, Optional<Integer> optional){
+  if (optional.isEmpty()) {
+    return new EmptyOptional<String>();
+  }
+  return Optional<String>(function(Optional.value()));
+}
+
+
+3. join : m (m a) -> m a
+
+public Optional<int> join(Optional<Optional<int>> nestedOptional) {
+  if (nestedOptional.value() == null) {
+//    return new Optional<String>(null) or null
+}
+  if (nestedOptional.value().value() == null) {
+  //    return new Optional<String>(null) or null
+}
+  return nestedOptional.value(); 
+}
+
+importance of `return` and `fmap` transition from unwrapped value to wrapped value, both return type `m` 
+
+Goal of a monad: 
+function compisition: a -> mb and b -> mc we can get to a -> mc
+
+Bind operator: 
+
+public Optional<String> func(Integer int) {
+  return new Optional<String>(String.valueof(int))
+}
+
+public Optional<String> bind(Optional<Integer> optionalInt, function){
+  if(Optional.isEmpty()) {
+    return new EmptyOptional<String>();
+  }
+  return function(Optional.value())
+}
+--->
+
+:ET
