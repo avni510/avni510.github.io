@@ -20,14 +20,28 @@ layout: page
       </div>
       <div class="text-wrap col-12 col-md-8">
         <h2 class="username" style="color:black">{{ profile.username }}</h2>
-        <div class="description" style="color:black">
+        <p class="description" style="color:black">
           I'm a masters student in Computer Science at at University of California at San Diego and a
           <a style="color:#33A8FF" href="https://cse.ucsd.edu/about/news/newest-deep-minds-uc-san-diegos-cse"> DeepMind Fellow </a>.
           I currently work with <a style="color:#33A8FF" href="https://www.berkustun.com/">Dr. Berk Ustun </a> and
-          <a style="color:#33A8FF" href="https://lilyweng.github.io/"> Dr. Lily Weng </a> on research related to AI fairness.
-          Outside of school you can usually find me biking or enjoying the outdoors in San Diego. Don't hestiate to reach out if
+          <a style="color:#33A8FF" href="https://lilyweng.github.io/"> Dr. Lily Weng </a> on research related to recourse in AI fairness. I am
+          broadly interested in questions related to trustworthiness in AI. Topics I'm interested in lately: </p>
+        <ul class="research" style="color:black">
+          <li class="list" style="color:black"=> Recourse: What causes some users to have recourse be unobtainable? How can we detect this?</li>
+          <li class="list" style="color:black"=> AI Fairness: What is considered a fair model? Can we create definitions and metrics around this?</li>
+          <li class="list" style="color:black"=> AI Privacy: How can we prevent models from leakage of sensitive data? When do privacy definitions break down?</li>
+        </ul>
+        <p class="description" style="color:black;">
+          I completed my bachelors at the University of Texas at Austin where I did a BA in Mathematics and a BA in Economics.
+          Outside of school you can usually find me biking or enjoying the outdoors in San Diego.
+        </p>
+        <p class="description" style="color:black;">
+        Here's a link to my CV
+        </p>
+        <p class="description" style="color:black;">
+          Don't hestiate to reach out if
           you want to learn more about me or my work!
-        </div>
+        </p>
 
         <ul id="icons">
           {% include social.html %}
@@ -38,9 +52,12 @@ layout: page
   </section>
   <!-- career section -->
   <section id="career" class="row">
-    <article class="exper col-12 col-md-6">
+    <article class="exper col-12 col-md-6 offset-4">
+      {% include news.html %}
+      {% include publications.html %}
       {% include experience.html %}
-      {% include awards.html %}
+      {% include teaching_experience.html %}
+      {% include service.html %}
     </article>
     <article class="skills col-12 col-md-6">
       {% include interests.html %}

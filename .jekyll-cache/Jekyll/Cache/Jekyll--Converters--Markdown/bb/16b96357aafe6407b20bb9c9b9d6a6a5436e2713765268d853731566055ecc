@@ -1,2 +1,0 @@
-I"K<p>This blogpost will specifically cover cross joins and how they can lead to slow queries. Cross joins also known as a Cartesian Product joins all rows of each table together. The wikipedia page on a <a href="https://en.wikipedia.org/wiki/Cartesian_product">Cartesian Product</a> has a good visual of what that would be mean.</p>
-:ET

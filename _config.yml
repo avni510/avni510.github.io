@@ -30,8 +30,9 @@ locale: en_US
 theme_settings:
   title: Grape Academic Theme
 
-  experience_title: EXPERIENCE
+  experience_title: Industry Experience
   interests_title: RESEARCH INTERESTS
+  news_title: News
   # skills_title: SKILLS
   # awards_title: AWARDS
   # projects_title: PROJECTS

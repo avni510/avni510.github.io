@@ -22,6 +22,15 @@
         margin: 10px 0;
         font-size: 0.95rem;
       }
+      ul.research {
+        margin-bottom: 20px;
+        margin-top: 20px;
+      }
+      li.list {
+        margin: 10px 0;
+        margin-left: 5%;
+        font-size: 0.95rem;
+      }
       @media (max-width: 767px) {
         margin-top: 15px;
         text-align: center;
@@ -168,7 +177,13 @@
       margin-left: 3%;
       list-style-type: none;
       list-style-position: inside;
-      li.interest {
+      p.date {
+        margin: 8px auto;
+        padding-left: 5px;
+        font-size: 1rem;
+        font-weight: 200;
+      }
+      p.interest {
         margin: 8px auto;
         padding-left: 5px;
         font-size: 1rem;
@@ -182,6 +197,44 @@
         vertical-align: text-top;
       }
     }
+    ul.pubs-list {
+      margin-top: 20px;
+      margin-left: 3%;
+      list-style-type: none;
+      list-style-position: inside;
+      li.pubs {
+        margin: 8px auto;
+        padding-left: 5px;
+        font-size: 1rem;
+        font-weight: 600;
+      }
+      p.pub-title {
+        margin: 8px auto;
+        text-decoration: underline;
+        font-size: 20px;
+        font-weight: 600;
+      }
+      p.pub-authors {
+        margin: 8px auto;
+        font-size: 15px;
+        font-weight: 500;
+      }
+      b.pub-me {
+        margin: 8px auto;
+        font-size: 15px;
+        font-weight: 600;
+      }
+      p.pub-date {
+        margin: 8px auto;
+        font-size: 15px;
+        font-weight: 500;
+      }
+      p.pub-description {
+        margin: 8px auto;
+        font-size: 15px;
+        font-weight: 500;
+      }
+    }
     ul.awards-list {
       margin-top: 20px;
       margin-left: 3%;
@@ -191,7 +244,7 @@
         margin: 8px auto;
         padding-left: 5px;
         font-size: 1rem;
-        font-weight: 600;
+        font-weight: 500;
       }
       li.award::before {
         content: "•";
