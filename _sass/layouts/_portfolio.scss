@@ -62,7 +62,7 @@
   #career {
     @extend %page-padding;
     margin-bottom: 55px;
-    margin-top: 55px;
+    margin-top: 20px;
     .title {
       margin-top: 15px;
       color: $theme-dark;
@@ -95,8 +95,12 @@
             font-size: 0.75rem;
             color: rgba(0, 0, 0, 0.5);
           }
-          .description {
+          .company {
             font-size: 1rem;
+          }
+          .description {
+            font-size: .85rem;
+            font-weight: 500;
           }
         }
         li.meta::before {

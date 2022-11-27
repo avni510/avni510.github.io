@@ -5,10 +5,16 @@ webpage: https://avni510.github.io
 experience: # Remove for hiding the experience section
   - start: Jan 2020
     end: May 2021
-    experience : Edovo, Software Engineer
+    company : Edovo, Software Engineer
+    description_1: Individually redesigned and rearchitected the backbone service of the platform using Elasticsearch, Java, and Javascript/ React to handle over 700k requests per day
+    description_2: Worked on compressing 4 billion rows of event data to reduce our storage space
+    description_3: Organized sessions for the team to have dedicated time to discuss best software practices and new technology
   - start: Aug 2017
     end: March 2019
-    experience : 8th Light, Lead Software Engineer
+    company : 8th Light, Lead Software Engineer
+    description_1: Worked with a small team on a greenfield project to build out a diabetes management iPhone application with an Elixir Phoenix backend and React and Swift/iOS frontends
+    description_2: Worked on a continuous deployment team writing Java while integrating with internal tools in a complex ecosystem
+    description_3: Committed to continuous learning and sharing my knowledge by frequent pair programming and giving talks to apprentices
 # interests: # Remove for hiding the interests section
 #   - Interest 1
 #   - Interest 2
