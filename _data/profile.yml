@@ -5,16 +5,17 @@ webpage: https://avni510.github.io
 experience: # Remove for hiding the experience section
   - start: Jan 2020
     end: May 2021
-    company : Edovo, Software Engineer
-    description_1: Individually redesigned and rearchitected the backbone service of the platform using Elasticsearch, Java, and Javascript/ React to handle over 700k requests per day
-    description_2: Worked on compressing 4 billion rows of event data to reduce our storage space
-    description_3: Organized sessions for the team to have dedicated time to discuss best software practices and new technology
+    company : Edovo, Software Engineer - Chicago, IL
+    description_1: Designed and architected the education content platform to handle over 700k requests per day.
+    description_2: Created a pipeline and nightly job to merge 4 billion rows of user event data in PostgreSQL.
+    description_3: Spearheaded team sessions to discuss the best software practices and latest technologies.
   - start: Aug 2017
     end: March 2019
-    company : 8th Light, Lead Software Engineer
-    description_1: Worked with a small team on a greenfield project to build out a diabetes management iPhone application with an Elixir Phoenix backend and React and Swift/iOS frontends
-    description_2: Worked on a continuous deployment team writing Java while integrating with internal tools in a complex ecosystem
-    description_3: Committed to continuous learning and sharing my knowledge by frequent pair programming and giving talks to apprentices
+    company : 8th Light, Lead Software Engineer - Chicago, IL
+    description_1: Developed a holistic diabetes management iOS app to connect patients with diabetic nurses.
+    description_2: Engineered applications from inception with Elixir Phoenix, Java, Swift, and React.
+    description_3: Worked on a continuous deployment team writing Java while integrating with internal tools.
+    description_4: Provided frequent mentoring through pair programming and extended code reviews.
 # interests: # Remove for hiding the interests section
 #   - Interest 1
 #   - Interest 2
