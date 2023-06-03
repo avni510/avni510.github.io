@@ -6,16 +6,16 @@ experience: # Remove for hiding the experience section
   - start: Jan 2020
     end: May 2021
     company : Edovo, Software Engineer - Chicago, IL
-    description_1: Designed and architected the education content platform to handle over 700k requests per day.
-    description_2: Created a pipeline and nightly job to merge 4 billion rows of user event data in PostgreSQL.
-    description_3: Spearheaded team sessions to discuss the best software practices and latest technologies.
+    description_1: Designed and developed an educational content platform to handle 700K+ requests per day
+    description_2: Created a pipeline and nightly job to merge 4 billion rows of user event data in PostgreSQL 
+    description_3: Spearheaded team sessions to improve software development practices and adopt new frameworks 
   - start: Aug 2017
     end: March 2019
     company : 8th Light, Lead Software Engineer - Chicago, IL
-    description_1: Developed a holistic diabetes management iOS app to connect patients with diabetic nurses.
-    description_2: Engineered applications from inception with Elixir Phoenix, Java, Swift, and React.
-    description_3: Worked on a continuous deployment team writing Java while integrating with internal tools.
-    description_4: Provided frequent mentoring through pair programming and extended code reviews.
+    description_1: Developed a diabetes management iOS app to connect patients with diabetic nurse specialists 
+    description_2: Enhanced a Java-based continuous deployment pipeline, seamlessly integrating with internal tools 
+    description_3: Mentored peers and residents through pair programming sessions and code reviews 
+    description_4: Created an HTTP Server in Java without libraries for app deployment 
 # interests: # Remove for hiding the interests section
 #   - Interest 1
 #   - Interest 2
