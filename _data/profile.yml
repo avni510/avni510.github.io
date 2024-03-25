@@ -3,6 +3,13 @@ username: Avni Kothari
 description: 
 webpage: https://avni510.github.io
 experience: # Remove for hiding the experience section
+  - start: September 2023
+    end: Present
+    company : UCSF, Data Scientist - San Francisco, CA
+    description_1: Researching and implementing methods with large language models to align tabular machine learning models with clinical intuition for model interpretability and reliability
+    description_2: Deploying healthcare ML models at Zuckerberg San Francisco General Hospital
+    description_3: Creating and evaluating a 30-day all cause readmissions model for deployment at the hospital 
+    description_4: Building a data pipeline to process electronic health records from thousands of patients to make data compatible with machine learning algorithms 
   - start: Jan 2020
     end: May 2021
     company : Edovo, Software Engineer - Chicago, IL
@@ -16,7 +23,16 @@ experience: # Remove for hiding the experience section
     description_2: Enhanced a Java-based continuous deployment pipeline, seamlessly integrating with internal tools 
     description_3: Mentored peers and residents through pair programming sessions and code reviews 
     description_4: Created an HTTP Server in Java without libraries for app deployment 
-# interests: # Remove for hiding the interests section
+# poster_presentations: # Remove for hiding the experience section
+#   - date: Feb 2024
+#     presentation: UCSF Retreat, AI Convergence: Preparing for the Age of AI
+#   - date: July 2023
+#     presentation: ICML Workshop on Data-centric Machine Learning Research 
+#   - date: July 2023
+#     presentation: ICML Workshop on Spurious Correlations, Invariance and Stability 
+#   - date: July 2023
+#     presentation: ICML Workshop on Artificial Intelligence & Human Computer Interaction 
+# # interests: # Remove for hiding the interests section
 #   - Interest 1
 #   - Interest 2
 # skills: # Remove for hiding the skills section
