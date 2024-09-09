@@ -6,10 +6,10 @@ experience: # Remove for hiding the experience section
   - start: September 2023
     end: Present
     company : UCSF, Data Scientist - San Francisco, CA
-    description_1: Researching and implementing methods with large language models to align tabular machine learning models with clinical intuition for model interpretability and reliability
-    description_2: Deploying healthcare ML models at Zuckerberg San Francisco General Hospital
-    description_3: Creating and evaluating a 30-day all cause readmissions model for deployment at the hospital 
-    description_4: Building a data pipeline to process electronic health records from thousands of patients to make data compatible with machine learning algorithms 
+    description_1: Researching and deploying healthcare ML models at San Francisco General Hospital under Jean Feng
+    description_2: Researching and implementing methods with LLMs to align tabular machine learning models with clinical intuition for model interpretability and reliability
+    description_3: Researching and evaluating using LLMs in conjunction with Bayesian methods to extract concepts from clinical notes 
+    description_4: Creating, evaluating, and deploying a 30-day all cause readmissions model for use at the hospital
   - start: Jan 2020
     end: May 2021
     company : Edovo, Software Engineer - Chicago, IL
