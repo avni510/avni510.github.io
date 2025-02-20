@@ -178,3 +178,40 @@ a.btn  {
 				color: $theme-color;
 		}
 }
+
+.archive-list,
+.archive-list li {
+  /* Remove default list bullets and spacing */
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Each year block */
+.archive-year {
+  margin-bottom: 1rem; /* space between years */
+
+  .year-link {
+    /* Make it look like a standard link */
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+
+    &:hover,
+    &:focus {
+      color: darkblue; 
+      text-decoration: underline;
+    }
+  }
+
+  .posts-list {
+    margin-top: 0.5rem;
+    margin-left: 1rem; 
+  }
+}

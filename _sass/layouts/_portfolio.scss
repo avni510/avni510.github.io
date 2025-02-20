@@ -6,10 +6,14 @@
     }
     .img-wrap {
       text-align: center;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
       .img {
         display: inline-block;
-        width: 315px;
-        height: 315px;
+        width: 100%;
+        height: auto;
+        max-width: 315px;
         border-radius: 15px;
         img {
           width: 100%;

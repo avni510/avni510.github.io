@@ -12,9 +12,10 @@
     <!--   <img src="{{ imgurl }}" alt="profile-image"> -->
     <!-- </div> -->
   </a>
-  <p class="username">{{ profile.username }}</p>
+  <p style="font-size: 0.875rem" class="username"> Archive </p>
   <!-- <div class="description">{{ profile.description | markdownify }}</div> -->
 
+  {% include blog_archive.html %}
   <!-- Social icons from Font Awesome -->
   <ul id="icons">
     {% include social.html %}
