@@ -74,7 +74,7 @@
       font-weight: 600;
     }
     .exper {
-      padding-top: 35px;
+      padding-top: 0px;
       ul.exper-list {
         margin-top: 25px;
         margin-left: 3%;
@@ -90,10 +90,11 @@
         }
         li.meta {
           position: relative;
-          padding: 15px 0 15px 30px;
+          padding: 15px 0 0px 30px;
           p {
             font-weight: 600;
             line-height: 1rem;
+            padding-bottom: 8px;
           }
           .date {
             font-size: 0.75rem;
@@ -131,16 +132,23 @@
     }
     .skills {
       padding-top: 35px;
+      margin-left: 6%;
       ul.skill-list {
         margin-top: 20px;
-        margin-left: 3%;
         list-style-type: none;
+        padding-left:20px;
+        p.name {
+            padding-left: 10px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
         li.skill {
           margin: 18px auto;
+          padding-left: 30px;
           .name {
-            padding-left: 5px;
+            padding-left: 30px;
             font-size: 0.85rem;
-            font-weight: 600;
+            font-weight: bold;
           }
           .progress {
             position: relative;
@@ -205,6 +213,29 @@
         vertical-align: text-top;
       }
     }
+
+    ul.posters-list{
+      margin-top: 20px;
+      list-style-type: none;
+      list-style-position: inside;
+      li.pres {
+        margin: 12px auto;
+        font-size: 1rem;
+        font-weight: 600;
+        margin-left: 4%;
+      }
+      p.pres-title {
+        margin: 12px auto;
+        font-size: 15px;
+        font-weight: 400;
+      }
+      p.pres-date {
+        margin: 12px auto;
+        font-size: 12px;
+        font-weight: 500;
+      }
+    }
+
     ul.pubs-list {
       margin-top: 20px;
       margin-left: 3%;

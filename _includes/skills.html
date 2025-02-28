@@ -1,14 +1,20 @@
 {% if site.data.profile.skills %}
-  <p class="title">{{ site.theme_settings.skills_title }}</p>
+  <p class="title">Skills</p>
   <ul class="skill-list">
-    {% for _ in site.data.profile.skills %}
-    <li class="skill">
-      <p class="name">{{ _.skill }}</p>
-      <div class="progress">
-        <div class="progress-bar" style="width: {{ _.value }}%">
-          <div class="progress-value">{{ _.value }}%</div>
-        </div>
-      </div>
+    {% for sk in site.data.profile.skills %}
+    <p class="name" style="font-weight: 550; padding-top: 10px; margin-left: 4%">{{ sk.title }}</p>
+    <li class="skill" style="margin-left: 4%;"> {{sk.value_1 }} </li>
+    <li class="skill" style="margin-left: 4%;"> {{sk.value_2 }} </li>
+    <li class="skill" style="margin-left: 4%;"> {{sk.value_3 }} </li>
+    {% if sk.value_4 %}
+      <li class="skill" style="margin-left: 4%;"> {{sk.value_4 }} </li>
+    {% endif %}
+    {% if sk.value_5 %}
+      <li class="skill" style="margin-left: 4%;"> {{sk.value_5 }} </li>
+    {% endif %}
+    {% if sk.value_6 %}
+    <li class="skill" style="margin-left: 4%;"> {{sk.value_6 }} </li>
+    {% endif %}
     </li>
     {% endfor %}
   </ul>

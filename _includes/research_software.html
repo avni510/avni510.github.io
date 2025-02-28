@@ -1,0 +1,14 @@
+{% if site.data.profile.research_software %}
+  <p class="title">Research Software</p>
+  <ul class="exper-list">
+    {% for res in site.data.profile.research_software %}
+    <li class="meta" style="padding-top: 0px">
+      <p class="company"> <a href={{res.link}} style="color: #33A8FF">{{ res.title }}</a></p>
+      <p class="date">{{ res.date }}</p>
+      <p class="description">{{ res.description_1 }}</p>
+      <p class="description">{{ res.description_2 }}</p>
+      <p class="description">{{ res.description_3 }}</p>
+    </li>
+    {% endfor %}
+  </ul>
+{% endif %}

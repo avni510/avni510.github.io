@@ -5,39 +5,58 @@ webpage: https://avni510.github.io
 experience: # Remove for hiding the experience section
   - start: September 2023
     end: Present
-    company : UCSF, ML Researcher/ Data Scientist - San Francisco, CA
-    description_1: Researching and deploying healthcare ML models at San Francisco General Hospital under Jean Feng
-    description_2: Researching and implementing methods with LLMs to align tabular machine learning models with clinical intuition for model interpretability and reliability
-    description_3: Researching and evaluating using LLMs in conjunction with Bayesian methods to extract concepts from clinical notes 
-    description_4: Creating, evaluating, and deploying a 30-day all cause readmissions model for use at the hospital
+    company : Research Engineer; University of California, San Francisco - San Francisco, CA
+    description_1: Developed a multimodal method to improve interpretability of black box models by generating and refining concept bottleneck models within a Bayesian framework for uncertainty quantification, outperforming baseline methods by 35%
+    description_2: Created a method to use a Bayesian tree based model that merges Llama 2’s domain knowledge with empirical data, increasing interpretability by 40%, as confirmed by domain experts, while matching top predictive performance and quantifying risk 
+    description_3: Designed and deployed a scalable ETL pipeline to process health record data, enabling ML training and evaluation for 3K+ patient records and 30K+ patient visits 
+    description_4: Built, deployed, and evaluated a custom clinical risk prediction model adopted by 10+ clinics, achieving 12% higher accuracy than the general clinical model 
+    description_5: Mentored 5+ peers and PhD students through teaching sessions and code reviews 
   - start: Jan 2020
     end: May 2021
-    company : Edovo, Software Engineer - Chicago, IL
-    description_1: Designed and developed an educational content platform to handle 700K+ requests per day
-    description_2: Created a pipeline and nightly job to merge 4 billion rows of user event data in PostgreSQL 
-    description_3: Spearheaded team sessions to improve software development practices and adopt new frameworks 
+    company : Software Engineer; Edovo - Chicago, IL
+    description_1: Architected, tested, and deployed an educational content platform using Elasticsearch to handle 700K+ requests per day 
+    description_2: Led 10+ requirement gathering sessions with Product owners to re-build a platform 
+    description_3: Created a data pipeline and job to merge 4B rows of user event data in PostgreSQL 
   - start: Aug 2017
     end: March 2019
-    company : 8th Light, Lead Software Engineer - Chicago, IL
-    description_1: Developed a diabetes management iOS app to connect patients with diabetic nurse specialists 
-    description_2: Enhanced a Java-based continuous deployment pipeline, seamlessly integrating with internal tools 
-    description_3: Mentored peers and residents through pair programming sessions and code reviews 
-    description_4: Created an HTTP Server in Java without libraries for app deployment 
-# poster_presentations: # Remove for hiding the experience section
-#   - date: Feb 2024
-#     presentation: UCSF Retreat, AI Convergence: Preparing for the Age of AI
-#   - date: July 2023
-#     presentation: ICML Workshop on Data-centric Machine Learning Research 
-#   - date: July 2023
-#     presentation: ICML Workshop on Spurious Correlations, Invariance and Stability 
-#   - date: July 2023
-#     presentation: ICML Workshop on Artificial Intelligence & Human Computer Interaction 
+    company : Lead Software Engineer; 8th Light - Chicago, IL
+    description_1: Implemented and deployed a scalable load testing platform simulating 1000+ RPS 
+    description_2: Engineered API integrations to sync 1000+ interactions/ minute in different timezones 
+research_software:
+  - title: bc-llm
+    link: https://github.com/jjfeng/bc-llm
+    date: June 2024
+    description_1: Implemented and developed a multimodal method using Metropolis Gibbs sampling to identify interpretable features for complex models
+    description_2: Benchmarked and implemented 5+ comparator methods against our method, achieving performance comparable to or exceeding black-box models
+  - title: reachml 
+    link: https://github.com/ustunb/reachml 
+    date: June 2022
+    description_1: Constructed a Mixed Integer Program to handle 50+ feature constraints for counterfactual explanations and test for robustness 
+    description_2: Created a model-agnostic fairness and safety audit to identify scenarios of preclusion 
+    description_3: Developed an HPC-based experimental pipeline to audit 200K+ individuals and benchmark results against baseline methods
+  
 # # interests: # Remove for hiding the interests section
 #   - Interest 1
 #   - Interest 2
-# skills: # Remove for hiding the skills section
-#   - skill: HTML5 & CSS
-#     value: 85  # Percent value
+skills:
+  - title: ML Engineering
+    value_1: ML Pipelines and ETL
+    value_2: Multimodal datasets
+    value_3: ML Deployment
+    value_4: ML Development & Evaluation
+  - title: AI Safety Research Skills
+    value_1: Interpretability
+    value_2: Robustness
+    value_3: Fairness and Bias
+    value_4: Risk Quantification
+    value_5: LLMs and Foundation Models
+    value_6: LLM Evaluations
+  - title: Tools and Frameworks
+    value_1: Python (Hugging Face, Pytorch, Scikit-learn, Numpy, Pandas)
+    value_2: AWS (EC2, S3, Terraform, Deployment Strategies)
+    value_3: Elasticsearch
+    value_4: DB (SQL, Postgres, DuckDB)
+    value_5: Docker
 social:
   email: avni510@gmail.com
   orcid: 

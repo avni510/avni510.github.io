@@ -29,12 +29,11 @@ locale: en_US
 # Page Settings
 theme_settings:
   title: Grape Academic Theme
-
   experience_title: Industry Experience
   poster_title: Poster Presentations 
   interests_title: RESEARCH INTERESTS
   news_title: News
-  # skills_title: SKILLS
+  skills_title: skills
   # awards_title: AWARDS
   # projects_title: PROJECTS
   # recentpubs_title: RECENT PUBLICATIONS

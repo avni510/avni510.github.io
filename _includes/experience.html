@@ -3,12 +3,17 @@
   <ul class="exper-list">
     {% for exp in site.data.profile.experience %}
     <li class="meta">
-      <p class="date">{{ exp.start }} &ndash; {{ exp.end }}</p>
       <p class="company">{{ exp.company }}</p>
+      <p class="date">{{ exp.start }} &ndash; {{ exp.end }}</p>
       <p class="description">{{ exp.description_1 }}</p>
       <p class="description">{{ exp.description_2 }}</p>
       <p class="description">{{ exp.description_3 }}</p>
-      <p class="description">{{ exp.description_4 }}</p>
+      {% if exp.description_4 %}
+        <p class="description">{{ exp.description_4 }}</p>
+      {% endif %}
+      {% if exp.description_5 %}
+        <p class="description">{{ exp.description_5 }}</p>
+      {% endif %}
     </li>
     {% endfor %}
   </ul>

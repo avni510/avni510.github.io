@@ -20,27 +20,27 @@ layout: page
       </div>
       <div class="text-wrap col-12 col-md-8">
         <h2 class="username" style="color:black">{{ profile.username }}</h2>
-        <p class="description" style="color:black">
-          I am currently working as a ML Researcher/ Data Scientist with <a class="description" style="color:#33A8FF" href="https://www.jeanfeng.com/"> Jean Feng</a>
-          at UCSF to help research and deploy ML algorithms for Zuckerberg San Francisco General Hospital. 
-          My research focuses on safety in machine learning from the perspective of 1) making machine learning models transparent 
-          and aligned with human intuition in high stakes settings, and 2) ensuring equitable and fair ML models by detecting individuals subject to preclusion.
-
-          I recently graduated from my Master's  in Computer Science at UC San Diego where I was named a
+        <h3 class="username" style="color:black;font-size: 1.1rem"> Research Engineer - AI Safety</h2>
+       <p class="description" style="color:black">
+          I am an AI Research Engineer with 5 years of software and ML engineering experience. 
+          My AI research, presented at <b style="font-size: 0.95rem"> ICLR, ICML, and NeurIPS</b>, focuses on:
+       <p>
+         <div class="col-md-14 offset-md-1">
+            <ol>
+              <li class="description" style="color:black"> Improving transparency and alignment in high-stakes AI models</li>
+              <li class="description" style="color:black"> Ensuring fairness by detecting scenarios of preclusion</li>
+            <ol>
+         </div>
+       <p class="description" style="color:black">
+          I recently graduated from my Master's in Computer Science at UC San Diego where I was named a
           <a class="description" style="color:#33A8FF" href="https://cse.ucsd.edu/about/news/newest-deep-minds-uc-san-diegos-cse"> DeepMind Fellow</a>.
-          At UCSD I worked with <a class="description" style="color:#33A8FF" href="https://www.berkustun.com/">Berk Ustun </a>
-          and <a class="description" style="color:#33A8FF" href="https://lilyweng.github.io/">Lily Weng </a> in algorithmic recourse.
-
-          Previously, I was a software engineer creating web-applications in education and healthcare. 
-          <!-- Before that, I received my Bachelors in Mathematics and Economics from UT Austin. -->
           Outside of work you can usually find me biking or enjoying the outdoors.
         </p>
         <p class="description" style="color:black;">
         My CV can be found <a class="description" style="color:#33A8FF" href="http://avni510.github.io/assets/files/cv.pdf"> here</a>.
         </p>
         <p class="description" style="color:black;">
-          Don't hesitate to reach out if
-          you want to learn more about me or my work!
+          Don't hesitate to reach out if you want to learn more about me or my work!
         </p>
 
         <ul id="icons">
@@ -50,17 +50,19 @@ layout: page
     </div>
   </section>
   <section id="career" class="row">
-    <article class="exper col-5 col-md-6 offset-4">
-      {% include news.html %}
-      {% include publications.html %}
+    <article class="exper col-5 col-md-11 offset-0">
       {% include experience.html %}
+      {% include publications.html %}
+      {% include research_software.html %}
+      {% include skills.html %}
+      {% include education.html %}
+      {% include poster_presentations.html %}
       {% include teaching_experience.html %}
       {% include service.html %}
     </article>
-    <article class="skills col-12 col-md-6">
-      {% include interests.html %}
-      {% include skills.html %}
-    </article>
+    <!-- <article class="skills col-12 col-md-6"> -->
+    <!--   &#60;&#33;&#45;&#45; {% include interests.html %} &#45;&#45;&#62; -->
+    <!-- </article> -->
   </section>
 
   {% include projects.html %}
