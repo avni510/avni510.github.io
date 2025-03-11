@@ -1,0 +1,15 @@
+I"�
+<h4 id="introduction">Introduction</h4>
+<p>LLMs unlock a new world of possibilities at our finger tips. But guardrails are essential for preventing information that may assist in the creation of chemical weapons or exploiting software vulnerabilities in security systems. Anthropic recently released a new safety safeguard approach called constitutional classifiers (<a href="https://arxiv.org/abs/2501.18837">Sharma et al., 2025</a>) to help prevent these scenarios. This approach builds upon their work of using constitutions for LLMs. Constitutions train AI to self-reflect based on a set of predefined language rules that define permitted and restricted content (<a href="https://arxiv.org/abs/2212.08073">Bai et al., 2022</a>). With the LLM’s constitution, Anthropic generates synthetic training data guided by these constitutional rules to fine-tune specialized classifier models that can identify harmful inputs and outputs, preventing users from bypassing their safeguards through jailbreaking techniques. The robustness of their approach was evaluated through automated red teaming and a public bug bounty program (<a href="https://arxiv.org/abs/2501.18837">Sharma et al., 2025</a>).
+<br />
+<br />
+In this blog, you will learn about jailbreaking, Anthropic’s constitutional classifiers approach, its applications and limitations, and potential future directions for safeguard evaluations.
+<br />
+<br />
+<br /></p>
+<h4 id="what-are-jailbreaks">What are Jailbreaks?</h4>
+<p>Jailbreaks are ways to bypass a model’s safety protocols.Community and internal testing have shown  that there are many ways to prompt or attack the model to incite this behavior (<a href="https://arxiv.org/abs/2404.02151]">Andriushchenko et al, 2024</a>). Several strategies have been used to jailbreak LLMs - for example, “Do Anything Now” (DAN), which creates role playing prompts to instruct the model that “it can do anything” (<a href="https://arxiv.org/abs/2308.03825">Shen et al., 2023</a>),  and “God Mode”, which are forceful instructions that claim elevated or all access privileges (<a href="https://github.com/elder-plinius/L1B3RT4S">Pliny, 2025</a>). 
+<br />
+<br />
+Below is an example of a <a href="https://github.com/verazuo/jailbreak_llms">known</a> DAN prompt and LLM responses that successfully extracted specific information about a dangerous chemical used in chemical warfare—a substance designated as a <a href="https://www.opcw.org/chemical-weapons-convention/annexes/annex-chemicals/schedule-1">schedule 1</a> by the government. Since most usage policies explicitly ban using LLMs for weapon creation, models are typically aligned to prevent the outputting this information.</p>
+:ET
