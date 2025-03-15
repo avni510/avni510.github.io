@@ -3,7 +3,8 @@ layout: post
 title: Are Constitutional Classifiers Ready for the Real World?
 subtitle: A deep dive into Anthropic's Constitutional Classifiers
 author: Avni Kothari
-comments: False
+comments: true
+disqus_identifier: "constitutional-classifier-2025"
 ---
 #### Introduction
 LLMs unlock a new world of possibilities at our finger tips. But guardrails are essential for preventing information that may assist in the creation of chemical weapons or exploiting software vulnerabilities in security systems. Anthropic recently released a new safety safeguard approach called constitutional classifiers ([Sharma et al., 2025](https://arxiv.org/abs/2501.18837)) to help prevent these scenarios. This approach builds upon their work of using constitutions for LLMs. Constitutions train AI to self-reflect based on a set of predefined language rules that define permitted and restricted content ([Bai et al., 2022](https://arxiv.org/abs/2212.08073)). With the LLM's constitution, Anthropic generates synthetic training data guided by these constitutional rules to fine-tune specialized classifier models that can identify harmful inputs and outputs, preventing users from bypassing their safeguards through jailbreaking techniques. The robustness of their approach was evaluated through automated red teaming and a public bug bounty program ([Sharma et al., 2025](https://arxiv.org/abs/2501.18837)).
