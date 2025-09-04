@@ -6,64 +6,67 @@ experience: # Remove for hiding the experience section
   - start: September 2023
     end: Present
     company : AI/ML Engineer; University of California, San Francisco - San Francisco, CA
-    description_1: Architected and led end-to-end development of a GPT 4o-powered patient summary system in collaboration with 5+ clinicians and social workers, generating concise summaries for patients with 20+ (20000+ tokens) clinical notes to improve patient outcomes
-    description_2: Established and led human annotation pipelines with social workers to validate LLM-generated summaries, then implemented automated evaluation frameworks with LLM-as-a-judge to scale across 100+ patient records 
-    description_3: Developed and authored a publication for a multimodal ML pipeline to integrate tabular and unstructured clinical data to improve black-box model interpretability, delivering 7% AUC improvement in readmission risk prediction 
-    description_4: Created and presented a hybrid LLM-empirical framework combining Llama 2's clinical knowledge with EHR data, achieving 40% interpretability improvement (validated by clinical experts) while matching top predictive performance and enabling production deployment
-    description_5: Designed and deployed a scalable ETL pipeline to process health record data, enabling ML training and evaluation for 3K+ patient records and 30K+ patient visits
-    description_6: Engineered, deployed, and evaluated a custom clinical risk prediction model adopted by 10+ clinics, achieving 12% higher accuracy than the general clinical model 
+    description_1: Architected and deployed clinical AI systems to save social workers 300+ hours/ week, identify patients at risk for readmission, and create simple, interpretable models from multimodal patient data 
+    description_2: Drove end-to-end architecture of a GPT 4o powered clinical summarization pilot to condense patient charts (20K+ tokens) into actionable summaries, co-developed with 5+ clinicians to improve patient care
+    description_3: Established and led human and automated annotation pipelines with active learning to ensure 90%+ accuracy on 1000+ GPT 4o clinical summaries
+    description_4: Designed and deployed a scalable ETL pipeline to process health record data, enabling ML training and evaluation for 3000+ patient records and 30000+ patient visits
+    description_5: Engineered, deployed, and evaluated a custom readmission risk prediction model, adopted by 10+ clinics, with 12% higher accuracy than the general model 
+    description_6: Created and presented a hybrid LLM-empirical framework to reconcile clinical LLM hallucinations, achieving 40% interpretability improvement (validated by clinical experts) while matching top predictive performance and enabling production deployment
+    description_7: Developed and authored a publication for a multimodal ML pipeline to integrate tabular and unstructured clinical data to improve black-box model interpretability, delivering 7% AUC improvement in readmission risk prediction
   - start: June 2022
     end: Mar 2024
     company : ML Engineer; University of California, SD; CA
-    description_1: Designed and developed a model agnostic auditing method and procedure to detect scenarios of bias for decision making models in high stakes settings
-    description_2: Experimented with different models and datasets to identify scenarios of bias for up to 30% of a lending dataset 
-    description_3: Authored a publication that received an ICLR Spotlight  (Top 5% among submissions)
-    description_4: Collaborated with a lending expert to define 25+ real-world constraints on lending datasets to identify individuals subject to preclusion 
+    description_1: Developed a model-agnostic bias auditing framework surfacing bias in up to 30% of lending datasets across 5+ models and 3+ datasets with 25+ real-world constraints 
+    description_2: Collaborated with a lending expert to define real-world constraints on lending datasets to identify individuals subject to preclusion 
+    description_3: Authored a publication that received an ICLR Spotlight  (Top 5% among submissions)  
   - start: Jan 2020
     end: May 2021
     company : Software Engineer; Edovo - Chicago, IL
-    description_1: Architected, tested, and deployed an educational content platform using Elasticsearch to handle 700K+ requests per day 
-    description_2: Led 10+ requirement gathering sessions with Product owners to re-build a platform 
-    description_3: Created a data pipeline and job to merge 4B rows of user event data in PostgreSQL 
+    description_1: Led the re-architecture and deployment of a scalable educational platform, handling the full lifecycle from leading product requirement sessions to engineering a data backend 
+    description_2: Architected, tested, and deployed a content platform using Elasticsearch to handle 700K+ requests per day to thousands of users 
+    description_3: Led 10+ requirement gathering sessions with Product owners to re-build a platform  
+    description_4: Created a data pipeline and job to merge 4B rows of user event data in PostgreSQL 
   - start: Aug 2017
     end: March 2019
     company : Lead Software Engineer; 8th Light - Chicago, IL
-    description_1: Implemented and deployed a scalable load testing platform simulating 1000+ RPS 
-    description_2: Engineered API integrations to sync 1000+ interactions/ minute in different timezones 
+    description_1: Built high-performance technical systems from inception to production, including load testing platforms, API integrations, and patient-facing healthcare applications 
+    description_2: Implemented and deployed a scalable load testing platform simulating 1000+ RPS  
+    description_3: Deployed API integrations to sync 1000+ interactions/ minute in different timezones 
+    description_4: Developed a diabetes management iOS app to connect 60+ patients with diabetic nurses 
+    description_5: Mentored peers and residents through pair programming sessions and code reviews
 research_software:
   - title: bc-llm
     link: https://github.com/jjfeng/bc-llm
     date: June 2024
-    description_1: Implemented and developed a multimodal method using Metropolis Gibbs sampling to identify interpretable features for complex models
-    description_2: Benchmarked and implemented 5+ comparator methods against our method, achieving performance comparable to or exceeding black-box models
+    description_1: Responsible AI software that enhances model transparency and safety through a multimodal LLM–Bayesian framework, allowing for the creation of simple and interpretable models. 
   - title: reachml 
     link: https://github.com/ustunb/reachml 
     date: June 2022
-    description_1: Constructed a Mixed Integer Program to handle 50+ feature constraints for counterfactual explanations and test for robustness 
-    description_2: Created a model-agnostic fairness and safety audit to identify scenarios of preclusion 
-    description_3: Developed an HPC-based experimental pipeline to audit 200K+ individuals and benchmark results against baseline methods
+    description_1: Created a model-agnostic fairness and safety audit to identify scenarios of preclusion 
   
 # # interests: # Remove for hiding the interests section
 #   - Interest 1
 #   - Interest 2
 skills:
-  - title: ML Engineering
+  - title: Languages 
+    value_1: Python
+    value_2: TypeScript
+    value_3: Java
+    value_4: Elixir
+    value_5: Clojure 
+  - title: AI/ML
+    value_1: GenAI (GPT 4o, Claude Sonnet 4, Cohere Command A)
+    value_2: Langchain
+    value_3: HuggingFace
+    value_4: PyTorch
+    value_5: LLM Evaluations
+    value_6: Benchmarking LLMs
+    value_7: Scikit-Learn
+  - title: MLOps
     value_1: ML Pipelines and ETL
-    value_2: Multimodal datasets
-    value_3: ML Deployment
-    value_4: ML Development & Evaluation
-  - title: AI Safety Research Skills
-    value_1: Interpretability
-    value_2: Robustness
-    value_3: Fairness and Bias
-    value_4: Risk Quantification
-    value_5: LLMs and Foundation Models
-    value_6: LLM Evaluations
-  - title: Tools and Frameworks
-    value_1: Python (Hugging Face, Pytorch, Scikit-learn, Numpy, Pandas)
-    value_2: AWS (EC2, S3, Terraform, Deployment Strategies)
-    value_3: Elasticsearch
-    value_4: DB (SQL, Postgres, DuckDB)
+    value_2: CI/CD
+    value_3: AWS (EC2, S3, Terraform)
+    value_4: Elasticsearch 
     value_5: Docker
 social:
   email: avni510@gmail.com
