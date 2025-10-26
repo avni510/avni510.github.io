@@ -12,7 +12,7 @@ experience: # Remove for hiding the experience section
     description_4: Designed and deployed a scalable ETL pipeline to process health record data, enabling ML training and evaluation for 3000+ patient records and 30000+ patient visits
     description_5: Engineered, deployed, and evaluated a custom readmission risk prediction model, adopted by 10+ clinics, with 12% higher accuracy than the general model 
     description_6: Created and presented a hybrid LLM-empirical framework to reconcile clinical LLM hallucinations, achieving 40% interpretability improvement (validated by clinical experts) while matching top predictive performance and enabling production deployment
-    description_7: Developed and authored a publication for a multimodal ML pipeline to integrate tabular and unstructured clinical data to improve black-box model interpretability, delivering 7% AUC improvement in readmission risk prediction
+    description_7: Developed and authored a publication for a scalable agentic pipeline using GPT-4 with statistical learning to generate interpretable clinical features from multimodal data, outperforming black-box models while maintaining interpretability for decision support 
   - start: June 2022
     end: Mar 2024
     company : ML Engineer; University of California, SD; CA
